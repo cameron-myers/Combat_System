@@ -15,10 +15,15 @@ Description:
 *******************************************************************************/
 
 //Standard Unity component libraries
+
+using System;
 using System.Collections; //Not needed in this file, but here just in case.
-using System.Collections.Generic; //Not needed in this file, but here just in case.
+using System.Collections.Generic;
+using Unity.Burst.Intrinsics; //Not needed in this file, but here just in case.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
-using UnityEngine.UI; //This is here so we don't have to type out longer names for UI components.
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random; //This is here so we don't have to type out longer names for UI components.
 
 //Inherits from MonoBehavior like all normal Unity components do...
 //Remember that the class name MUST be identical to the file name!
@@ -27,13 +32,13 @@ public class Hero : MonoBehaviour
     //Properties for maximum hit points, movement speed, maximum power, and optimal range.
     public float MaxHitPoints = 200;
     public float MoveSpeed = 0.1f;
-    public float MaxPower = 100;
+    public float MaxStamina = 100;
     public float OptimalRange = 5.0f;
 
     [HideInInspector]
     public float HitPoints = 200; //Current hit points
     [HideInInspector]
-    public float Power = 10; //Current power
+    public float Stamina = 10; //Current power
 
     [HideInInspector]
     public Enemy Target; //Current target enemy.
@@ -42,7 +47,7 @@ public class Hero : MonoBehaviour
     [HideInInspector]
     public BarScaler HealthBar;
     [HideInInspector]
-    public BarScaler PowerBar;
+    public BarScaler StaminaBar;
 
     //References to the abilities, so we don't have to look them up all the time.
     //These are set by hand in the inspector for the hero game object.
@@ -56,8 +61,8 @@ public class Hero : MonoBehaviour
     {
         //The static version of Find() on the GameObject class will just find the named object anywhere.
         //Use GetComponent so we don't have to use it later to access the functionality we want.
-        HealthBar = GameObject.Find("HeroResources/HealthBar").GetComponent<BarScaler>(); 
-        PowerBar = GameObject.Find("HeroResources/PowerBar").GetComponent<BarScaler>();
+        HealthBar = GameObject.Find("Hero_Health").GetComponent<BarScaler>(); 
+        StaminaBar = GameObject.Find("Hero_Stamina").GetComponent<BarScaler>();
     }
 
     //Update is called once per frame
@@ -156,7 +161,7 @@ public class Hero : MonoBehaviour
         //Reset hit points.
         HitPoints = MaxHitPoints;
         //Reset power, but to 10% of MaxPower, not the full amount.
-        Power = MaxPower * 0.1f;
+        Stamina = MaxStamina * 0.1f;
         //Reset all the cooldowns.
         if (AbilityOne != null) AbilityOne.ResetCooldown();
         if (AbilityTwo != null) AbilityTwo.ResetCooldown();
@@ -166,7 +171,7 @@ public class Hero : MonoBehaviour
         Target = FindTarget();
         //Make sure the health and power bars get reset.
         HealthBar.InterpolateImmediate(HitPoints / MaxHitPoints);
-        PowerBar.InterpolateImmediate(Power / MaxPower);
+        StaminaBar.InterpolateImmediate(Stamina / MaxStamina);
     }
     
     //Try to use a random ability.
@@ -192,12 +197,17 @@ public class Hero : MonoBehaviour
     }
 
     //Use a given amount of power.
-    public void UsePower(float power)
+    public void UseStamina(float stamina)
     {
+        if (Stamina - stamina <= 0.0f)
+        {
+
+            //TODO STUN SELF
+        }
         //Make sure power does not go negative (or above max, becaust the "power" could be negative).
-        Power = Mathf.Clamp(Power - power, 0.0f, MaxPower);
+        Stamina = Mathf.Clamp(Stamina - stamina, 0.0f, MaxStamina);
         //Interpolate the power UI bar over half a second.
-        PowerBar.InterpolateToScale(Power / MaxPower, 0.5f);
+        StaminaBar.InterpolateToScale(Stamina / MaxStamina, 0.5f);
     }
 
     //Take damage from any source.

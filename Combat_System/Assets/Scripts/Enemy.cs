@@ -27,17 +27,25 @@ public class Enemy : MonoBehaviour
     //Properties for maximum hit points, movement speed, and optimal range.
     //Note that enemies are not as complex as the hero.
     public float MaxHitPoints = 200;
+    public float MaxStamina = 200;
     public float MoveSpeed = 0.1f;
     public float OptimalRange = 5.0f;
 
     [HideInInspector]
     public float HitPoints = 200; //Current hit points.
+    [HideInInspector]
+    public float Stamina = 200; //Current hit points.
+
 
     [HideInInspector]
     public Hero Target; //Current target (always the hero in this case).
 
     [HideInInspector]
     public BarScaler HealthBar; //Reference to the health bar, so we don't have to look it up all the time.
+
+    [HideInInspector]
+    public BarScaler StaminaBar; //Reference to the stamina bar, so we don't have to look it up all the time.
+
 
     //References to the abilities, so we don't have to look them up all the time.
     [HideInInspector]
@@ -50,7 +58,8 @@ public class Enemy : MonoBehaviour
     {
         //Find() will get the first child game object of that name.
         //Use GetComponent so we don't have to use it later to access the functionality we want.
-        HealthBar = transform.Find("EnemyHealth").GetComponent<BarScaler>();
+        HealthBar = transform.Find("Enemy_Health").GetComponent<BarScaler>();
+        StaminaBar = transform.Find("Enemy_Stamina").GetComponent<BarScaler>();
         AbilityOne = transform.Find("AbilityOne").GetComponent<EnemyAbility>();
         AbilityTwo = transform.Find("AbilityTwo").GetComponent<EnemyAbility>();
     }
@@ -100,6 +109,7 @@ public class Enemy : MonoBehaviour
         transform.position = new Vector3(SimControl.StartingX, transform.position.y, transform.position.z);
         //Reset hit points.
         HitPoints = MaxHitPoints;
+        Stamina = MaxStamina;
         //Reset all the cooldowns.
         if (AbilityOne != null) AbilityOne.ResetCooldown();
         if (AbilityTwo != null) AbilityTwo.ResetCooldown();
@@ -107,6 +117,8 @@ public class Enemy : MonoBehaviour
         Target = GameObject.Find("Hero").GetComponent<Hero>();
         //Make sure the health bar gets reset as well.
         HealthBar.InterpolateImmediate(HitPoints / MaxHitPoints);
+        HealthBar.InterpolateImmediate(Stamina / MaxStamina);
+
     }
 
     //Try to use a random ability.
@@ -127,6 +139,15 @@ public class Enemy : MonoBehaviour
         if (abilityNumber == 2 && AbilityTwo != null)
             return AbilityTwo.Use();
         return false;
+    }
+
+    //Use a given amount of stamina.
+    public void UseStamina(float stamina)
+    {
+        //Make sure power does not go negative (or above max, becaust the "power" could be negative).
+        Stamina = Mathf.Clamp(Stamina - stamina, 0.0f, MaxStamina);
+        //Interpolate the power UI bar over half a second.
+        StaminaBar.InterpolateToScale(Stamina / MaxStamina, 0.5f);
     }
 
     //Take damage from any source.

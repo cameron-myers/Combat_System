@@ -29,7 +29,7 @@ public class HeroAbility : MonoBehaviour
     //Properties that define the ability's cooldown time, damage done, power used, range, etc.
     public float CooldownTime = 1.0f;
     public float DamageDone = 1.0f;
-    public float PowerUsed = 1.0f;
+    public float StaminaUsed = 1.0f;
     public float MaximumRange = 10.0f;
     public bool Inactive = false; //Make an ability inactive to temporarily or permanently not have it used.
 
@@ -97,7 +97,7 @@ public class HeroAbility : MonoBehaviour
         if (CooldownLeft > 0.0f)
             return false;
         //Not enough power.
-        if (PowerUsed > ParentHero.Power)
+        if (StaminaUsed > ParentHero.Stamina)
             return false;
         //Ready to go.
         return true;
@@ -110,7 +110,7 @@ public class HeroAbility : MonoBehaviour
         if (IsReady() == false)
             return false;
         //Use the power.
-        ParentHero.UsePower(PowerUsed);
+        ParentHero.UseStamina(StaminaUsed);
         //Apply the damage (or healing is the damage is negative).
         if (ParentHero.Target.TakeDamage(DamageDone) == true)
             ParentHero.Target = ParentHero.FindTarget(); //If the target is dead, find a new one.

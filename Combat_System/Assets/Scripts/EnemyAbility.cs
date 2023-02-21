@@ -28,15 +28,21 @@ public class EnemyAbility : MonoBehaviour
 {
     //Properties that define the ability's cooldown time, damage done, range, etc.
     public float CooldownTime = 1.0f;
+    public float StunTime = 1.0f;
     public float DamageDone = 1.0f;
+    public float StaminaUsed = 1.0f;
     public float MaximumRange = 10.0f;
     public bool Inactive = false; //Make an ability inactive to temporarily or permanently not have it used.
+    private bool Stunned = false; //flag for if the object is stunned
 
     [HideInInspector]
     public float CooldownLeft = 0.0f; //How much of the cooldown time is actually left.
 
     [HideInInspector]
     public BarScaler CooldownBar; //Reference to the cooldown timer bar, so we don't have to look it up all the time.
+
+    [HideInInspector]
+    public float StunLeft = 0.0f; //How much of the cooldown time is actually left.
 
     [HideInInspector]
     public Enemy ParentEnemy; //Reference to the parent enemy, so we don't have to look it up all the time.
@@ -55,17 +61,32 @@ public class EnemyAbility : MonoBehaviour
     {
         //Don't let the cooldown amount left go below zero.
         CooldownLeft = Mathf.Clamp(CooldownLeft - SimControl.DT, 0.0f, CooldownTime);
+        //clamp stun
+        StunLeft = Mathf.Clamp(StunLeft - SimControl.DT, 0.0f, StunTime);
+
         //Since cooldowns update every frame, no need to worry about interpolating over time.
         if (Inactive || CooldownTime == 0.0f) //Either doesn't have a cooldown or is inactive, so scale it to nothing.
             CooldownBar.InterpolateToScale(0.0f, 0.0f);
         else
             CooldownBar.InterpolateToScale(CooldownLeft / CooldownTime, 0.0f);
+
+        //TODO make a stun bar
+        /*if (!Stunned || StunTime == 0.0f) //Either doesn't have a stun or is inactive, so scale it to nothing.
+            
+            CooldownBar.InterpolateToScale(0.0f, 0.0f);
+        else
+            CooldownBar.InterpolateToScale(CooldownLeft / CooldownTime, 0.0f);*/
     }
 
     //Don't let a cooldown affect the next fight
     public void ResetCooldown()
     {
         CooldownLeft = CooldownTime;
+    }
+    //reset stun
+    public void ResetStun()
+    {
+        StunLeft = StunTime;
     }
 
     //Get the distance to the target along the X axis (1D not 2D).
@@ -95,6 +116,8 @@ public class EnemyAbility : MonoBehaviour
         //Still on cooldown.
         if (CooldownLeft > 0.0f)
             return false;
+        if (Stunned)
+            return false;
         //Ready to go.
         return true;
     }
@@ -111,6 +134,16 @@ public class EnemyAbility : MonoBehaviour
 
         //TODO: Add needed flags or other functionality for abilities that don't just do
         //damage or affect more than one target (AoE, heals, dodges, blocks, stuns, etc.)
+        if (ParentEnemy.Stamina <= 0.0f)
+        {
+            //TODO Stun self
+            Stunned=true;
+        }
+        else
+        {
+            ParentEnemy.UseStamina(StaminaUsed);
+        }
+
 
         //Put the ability on cooldown.
         CooldownLeft = CooldownTime;
