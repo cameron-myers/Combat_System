@@ -12,7 +12,9 @@ Custom Editor for Hero Ability
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.EditorTools;
 using UnityEditor;
+
 using UnityEngine;
 
 [CustomEditor(typeof(HeroAbility))]
