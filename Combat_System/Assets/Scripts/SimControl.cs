@@ -52,7 +52,7 @@ public class SimControl : MonoBehaviour
     //How far from the center of the screen is the "edge" of the arena?
     public static float EdgeDistance = 8.0f;
     //How far from the center of the screen do combatants start?
-    public static float StartingX = 1.0f;
+    public static float StartingX = 6.0f;
  
     //Telemetry data for an individual fight.
     public static int Victories = 0;

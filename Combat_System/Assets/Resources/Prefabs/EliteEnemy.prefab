@@ -298,8 +298,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHitPoints: 450
-  MoveSpeed: 0
-  OptimalRange: 3
+  MoveSpeed: 0.4
+  OptimalRange: 6
   HitPoints: 200
   StunLeft: 0
   Target: {fileID: 0}
@@ -513,7 +513,7 @@ MonoBehaviour:
   StunEnemy: 1
   EffectsList: 03000000
   CooldownTime: 3
-  MaximumRange: 5
+  MaximumRange: 7
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}

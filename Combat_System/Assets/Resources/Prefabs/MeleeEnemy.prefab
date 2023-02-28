@@ -410,7 +410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHitPoints: 350
-  MoveSpeed: 0
+  MoveSpeed: 0.5
   OptimalRange: 2
   HitPoints: 200
   StunLeft: 0
