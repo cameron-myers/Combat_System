@@ -52,7 +52,7 @@ public class SimControl : MonoBehaviour
     //How far from the center of the screen is the "edge" of the arena?
     public static float EdgeDistance = 8.0f;
     //How far from the center of the screen do combatants start?
-    public static float StartingX = 5.0f;
+    public static float StartingX = 1.0f;
  
     //Telemetry data for an individual fight.
     public static int Victories = 0;
@@ -174,7 +174,7 @@ public class SimControl : MonoBehaviour
     bool IsRoundOver()
     {
         //Player is dead.
-        if (Player.HitPoints == 0.0f)
+        if (Player.HitPoints <= 0.0f)
         {
             if (RoundOver == false) //Player just died.
             {
@@ -220,9 +220,9 @@ public class SimControl : MonoBehaviour
         if (RoundCount % 3 == 0)
             Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
         else if (RoundCount % 3 == 1)
-            Instantiate(EnemyType2Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Maybe adjust the starting X or Y a bit for groups.
+            Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Maybe adjust the starting X or Y a bit for groups.
         else if (RoundCount % 3 == 2)
-            Instantiate(EnemyType3Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //You'll really want these to be an array/dictionary of prefabs eventually.
+            Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //You'll really want these to be an array/dictionary of prefabs eventually.
         //Note that this just cycles through enemy types, but you'll need more structure than this.
         //Each fight should be one AI type against one enemy type multiple times. And then each AI type
         //against a group of the same type multiple times. And then each AI type against a mixed group

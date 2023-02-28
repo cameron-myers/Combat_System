@@ -18,7 +18,9 @@ Description:
 
 //Standard Unity component libraries
 using System.Collections; //Not needed in this file, but here just in case.
-using System.Collections.Generic; //Not needed in this file, but here just in case.
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices; //Not needed in this file, but here just in case.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
 using UnityEngine.UI; //This is here so we don't have to type out longer names for UI components.
 
@@ -26,12 +28,36 @@ using UnityEngine.UI; //This is here so we don't have to type out longer names f
 //Remember that the class name MUST be identical to the file name!
 public class HeroAbility : MonoBehaviour
 {
+
+    public enum Effect
+    {
+        StunSelf,
+        StunOther,
+        DamageSelf,
+        DamageTarget,
+    }
+
+
     //Properties that define the ability's cooldown time, damage done, power used, range, etc.
-    public float CooldownTime = 1.0f;
-    public float DamageDone = 1.0f;
-    public float StaminaUsed = 1.0f;
+
+    [HideInInspector]
+    public float DamageEnemy = 1.0f;
+    [HideInInspector]
+    public float DamageSelf = 1.0f;
+    [HideInInspector]
+    public float StunSelf = 1.0f;
+    [HideInInspector]
+    public float StunEnemy = 1.0f;
+
+    [SerializeField] public List<Effect> EffectsList = new List<Effect>();
+
+    public float StaminaCost = 1.0f;
     public float MaximumRange = 10.0f;
     public bool Inactive = false; //Make an ability inactive to temporarily or permanently not have it used.
+
+
+    public float CooldownTime = 1.0f;
+
 
     [HideInInspector]
     public float CooldownLeft = 0.0f; //How much of the cooldown time is actually left.
@@ -96,8 +122,7 @@ public class HeroAbility : MonoBehaviour
         //Still on cooldown.
         if (CooldownLeft > 0.0f)
             return false;
-        //Not enough power.
-        if (StaminaUsed > ParentHero.Stamina)
+        if (ParentHero.StunLeft > 0.0f)
             return false;
         //Ready to go.
         return true;
@@ -110,16 +135,57 @@ public class HeroAbility : MonoBehaviour
         if (IsReady() == false)
             return false;
         //Use the power.
-        ParentHero.UseStamina(StaminaUsed);
+        ParentHero.UseStamina(StaminaCost);
         //Apply the damage (or healing is the damage is negative).
-        if (ParentHero.Target.TakeDamage(DamageDone) == true)
+        //this is now done in DoEffect
+        /*if (ParentHero.Target.TakeDamage(DamageDone) == true)
             ParentHero.Target = ParentHero.FindTarget(); //If the target is dead, find a new one.
+            */
 
         //TODO: Add needed flags or other functionality for abilities that don't just do
         //damage or affect more than one target (AoE, heals, dodges, blocks, stuns, etc.)
+
+        //for list of effects
+        foreach(Effect fx in EffectsList)
+        {
+            //do effect
+            DoEffect(fx);
+        }
+
 
         //Put the ability on cooldown.
         CooldownLeft = CooldownTime;
         return true;
     }
+
+    
+    public void DoEffect(Effect fx)
+    {
+        //do each effect based on the enum passed in
+        if (fx == Effect.DamageTarget)
+        {
+            if (ParentHero.Target.TakeDamage(DamageEnemy) == true)
+                ParentHero.Target = ParentHero.FindTarget(); //If the target is dead, find a new one.
+
+        }
+        else if (fx == Effect.DamageSelf)
+        {
+            if (ParentHero.TakeDamage(DamageSelf) == true)
+            {
+                ParentHero.Target.Target = null; //If the parent is dead, set enemies target to null
+            }
+
+
+        }
+        else if (fx == Effect.StunSelf)
+        {
+            ParentHero.Stun(StunSelf);
+        }
+        else if (fx == Effect.StunOther)
+        {
+            ParentHero.Target.Stun(StunEnemy);
+        }
+
+    }
 }
+

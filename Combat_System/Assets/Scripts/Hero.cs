@@ -34,11 +34,17 @@ public class Hero : MonoBehaviour
     public float MoveSpeed = 0.1f;
     public float MaxStamina = 100;
     public float OptimalRange = 5.0f;
+    public float StaminaStun = 2.0f;
 
     [HideInInspector]
     public float HitPoints = 200; //Current hit points
     [HideInInspector]
-    public float Stamina = 10; //Current power
+    public float Stamina = 100; //Current stamina
+    [HideInInspector]
+    public float StunLeft = 0; //Current Stun
+
+    private float StunTime = 0.001f;
+
 
     [HideInInspector]
     public Enemy Target; //Current target enemy.
@@ -48,6 +54,8 @@ public class Hero : MonoBehaviour
     public BarScaler HealthBar;
     [HideInInspector]
     public BarScaler StaminaBar;
+
+    [HideInInspector] public BarScaler StunBar; // reference to stun bar
 
     //References to the abilities, so we don't have to look them up all the time.
     //These are set by hand in the inspector for the hero game object.
@@ -61,8 +69,11 @@ public class Hero : MonoBehaviour
     {
         //The static version of Find() on the GameObject class will just find the named object anywhere.
         //Use GetComponent so we don't have to use it later to access the functionality we want.
-        HealthBar = GameObject.Find("Hero_Health").GetComponent<BarScaler>(); 
-        StaminaBar = GameObject.Find("Hero_Stamina").GetComponent<BarScaler>();
+        HealthBar = transform.Find("Hero_Health").GetComponent<BarScaler>(); 
+        StaminaBar = transform.Find("Hero_Stamina").GetComponent<BarScaler>();
+        StunBar = transform.Find("StunBar").GetComponent<BarScaler>();
+        StunBar.InterpolateImmediate(StunLeft);
+
     }
 
     //Update is called once per frame
@@ -98,6 +109,21 @@ public class Hero : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha4) == true)
                 UseAbility(4);
         }
+
+        if (StunLeft > 0.0f)
+        {
+            StunLeft = Mathf.Clamp(StunLeft - Time.deltaTime, -0.1f, StunTime);
+
+        }
+        //if stun is done, reset stamina
+        if (StunLeft == 0.0f)
+        {
+            StunLeft = -0.001f;
+            Stamina = MaxStamina;
+            StaminaBar.InterpolateImmediate(Stamina/MaxStamina);
+        }
+
+
     }
 
     //Try to stay close to optimal range. Note this is done even in Auto mode.
@@ -160,8 +186,7 @@ public class Hero : MonoBehaviour
         transform.position = new Vector3(-SimControl.StartingX, transform.position.y, transform.position.z);
         //Reset hit points.
         HitPoints = MaxHitPoints;
-        //Reset power, but to 10% of MaxPower, not the full amount.
-        Stamina = MaxStamina * 0.1f;
+        Stamina = MaxStamina;
         //Reset all the cooldowns.
         if (AbilityOne != null) AbilityOne.ResetCooldown();
         if (AbilityTwo != null) AbilityTwo.ResetCooldown();
@@ -169,11 +194,12 @@ public class Hero : MonoBehaviour
         if (AbilityFour != null) AbilityFour.ResetCooldown();
         //Find a target.
         Target = FindTarget();
-        //Make sure the health and power bars get reset.
+        //Make sure the health stamina, and stun bars get reset.
         HealthBar.InterpolateImmediate(HitPoints / MaxHitPoints);
         StaminaBar.InterpolateImmediate(Stamina / MaxStamina);
+
     }
-    
+
     //Try to use a random ability.
     public bool UseRandomAbility()
     {
@@ -201,13 +227,13 @@ public class Hero : MonoBehaviour
     {
         if (Stamina - stamina <= 0.0f)
         {
-
-            //TODO STUN SELF
+            //StunSelf
+            Stun(StaminaStun);
         }
         //Make sure power does not go negative (or above max, becaust the "power" could be negative).
         Stamina = Mathf.Clamp(Stamina - stamina, 0.0f, MaxStamina);
         //Interpolate the power UI bar over half a second.
-        StaminaBar.InterpolateToScale(Stamina / MaxStamina, 0.5f);
+        StaminaBar.InterpolateToScale(Stamina / MaxStamina, 0.2f);
     }
 
     //Take damage from any source.
@@ -218,7 +244,7 @@ public class Hero : MonoBehaviour
             //Make sure hit points do not go negative (or above max, because the "damage" could be negative, i.e., healing).
             HitPoints = Mathf.Clamp(HitPoints - damage, 0.0f, MaxHitPoints);
             //Interpolate the hit point UI bar over half a second.
-            HealthBar.InterpolateToScale(HitPoints / MaxHitPoints, 0.5f);
+            HealthBar.InterpolateToScale(HitPoints / MaxHitPoints, 0.2f);
             //Create a temporary InfoText object to show the damage using the static Instantiate() function.
             Text damageText = Object.Instantiate(SimControl.InfoTextPrefab, transform.position, Quaternion.identity, SimControl.Canvas.transform).GetComponent<Text>();
             //Set the damage text to just the integer amount of the damage done.
@@ -229,5 +255,17 @@ public class Hero : MonoBehaviour
         return (HitPoints <= 0.0f);
     }
 
+    public void Stun(float stunTime)
+    {
+        StunLeft = stunTime;
+        StunTime = stunTime;
+        StunBar.InterpolateImmediate(1.0f);
+        //Interpolate the hit 0 over stun time
+        StunBar.InterpolateToScale(0.0f, stunTime);
+        
+
+    }
+
 }
 
+    
