@@ -359,7 +359,7 @@ MonoBehaviour:
   StunEnemy: 1
   EffectsList: 03000000
   CooldownTime: 0.5
-  MaximumRange: 5
+  MaximumRange: 4
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
@@ -513,7 +513,7 @@ MonoBehaviour:
   StunEnemy: 1
   EffectsList: 03000000
   CooldownTime: 3
-  MaximumRange: 7
+  MaximumRange: 6
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}

@@ -131,6 +131,8 @@ public class Hero : MonoBehaviour
     {
         if (HitPoints <= 0.0f || Target == null) //If all enemies or the player is dead, no need to move.
             return;
+        
+        if(StunLeft > 0.0f ) return;
 
         float newX = transform.position.x;
 

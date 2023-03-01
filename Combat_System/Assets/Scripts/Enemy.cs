@@ -85,6 +85,9 @@ public class Enemy : MonoBehaviour
     //Try to stay close to optimal range.
     public void DoMovement()
     {
+        if (StunLeft > 0.0f) return;
+
+
         if (HitPoints <= 0.0f || Target == null) //If the enemy or the player is dead, no need to move.
             return;
         //Calculate distance to target along the X axis (1D not 2D).
