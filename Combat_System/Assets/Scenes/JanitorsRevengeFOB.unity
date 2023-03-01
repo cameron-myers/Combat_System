@@ -974,6 +974,8 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: '10s Cooldown
 
+    7 Range
+
     2s Stun To Enemy
 
     5 Stamina'
@@ -1454,7 +1456,7 @@ MonoBehaviour:
   StunEnemy: 1
   EffectsList: 03000000
   StaminaCost: 10
-  MaximumRange: 2
+  MaximumRange: 3
   Inactive: 0
   CooldownTime: 4
   CooldownLeft: 0
@@ -2056,12 +2058,14 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: '10s Cooldown
 
+    15 Range
+
     10 Damage to Enemy
 
     5 Damage to Self
 
-    5 Stun
-    to Enemy
+    5
+    Stun to Enemy
 
     15 Stamina'
 --- !u!222 &1248410155
@@ -2496,7 +2500,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1516711797}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -7.01, y: 0.01, z: 0}
+  m_LocalPosition: {x: -7.29, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2518,8 +2522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c89209401fcfc574dbccb9e4ed27636d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHitPoints: 300
-  MoveSpeed: 0.5
+  MaxHitPoints: 325
+  MoveSpeed: 1.2
   MaxStamina: 150
   OptimalRange: 5
   StaminaStun: 2

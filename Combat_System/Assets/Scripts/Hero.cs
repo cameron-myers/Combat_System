@@ -131,24 +131,35 @@ public class Hero : MonoBehaviour
     {
         if (HitPoints <= 0.0f || Target == null) //If all enemies or the player is dead, no need to move.
             return;
-        //Calculate distance to target along the X axis (1D not 2D).
-        float distanceToTarget = transform.position.x - Target.transform.position.x;
-        //If we are between 80% and 100% of optimal range, that's good enough.
-        if (Mathf.Abs(distanceToTarget) <= OptimalRange && Mathf.Abs(distanceToTarget) >= OptimalRange * 0.8f)
-            return;
-        //If we are too close, flip the "distance" so we will move away instead of towards.
-        if (Mathf.Abs(distanceToTarget) < OptimalRange * 0.8f)
-            distanceToTarget = -distanceToTarget;
-        //We need to move, so get our current X position.
+
         float newX = transform.position.x;
-        if (distanceToTarget > 0) //Move to the left.
-            newX -= MoveSpeed * SimControl.DT; //Make sure to use the simulated DT.
-        else //Move to the right.
-            newX += MoveSpeed * SimControl.DT; //Make sure to use the simulated DT.
-        //Don't go past the edge of the arena.
+
+        //if not in auto mode
+        if (SimControl.AutoMode == true)
+        {
+            //Calculate distance to target along the X axis (1D not 2D).
+            float distanceToTarget = transform.position.x - Target.transform.position.x;
+            //If we are between 80% and 100% of optimal range, that's good enough.
+            if (Mathf.Abs(distanceToTarget) <= OptimalRange && Mathf.Abs(distanceToTarget) >= OptimalRange * 0.8f)
+                return;
+            //If we are too close, flip the "distance" so we will move away instead of towards.
+            if (Mathf.Abs(distanceToTarget) < OptimalRange * 0.8f)
+                distanceToTarget = -distanceToTarget;
+            //We need to move, so get our current X position.
+            if (distanceToTarget > 0) //Move to the left.
+                newX -= MoveSpeed * SimControl.DT; //Make sure to use the simulated DT.
+            else //Move to the right.
+                newX += MoveSpeed * SimControl.DT; //Make sure to use the simulated DT.
+            //Don't go past the edge of the arena.
+            //Update the transform.
+        }
+        else
+        {
+            newX += Input.GetAxis("Horizontal") * MoveSpeed * Time.deltaTime;
+        }
         newX = Mathf.Clamp(newX, -SimControl.EdgeDistance, SimControl.EdgeDistance);
-        //Update the transform.
         transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+
     }
 
     //Find the best target for the hero.

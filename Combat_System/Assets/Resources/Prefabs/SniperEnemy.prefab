@@ -245,8 +245,8 @@ MonoBehaviour:
   DamageSelf: 1
   StunSelf: 1
   StunEnemy: 1
-  EffectsList: 03000000
-  CooldownTime: 1
+  EffectsList: 0300000001000000
+  CooldownTime: 3
   MaximumRange: 10
   Inactive: 0
   CooldownLeft: 0

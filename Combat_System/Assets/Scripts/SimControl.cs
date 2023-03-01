@@ -95,9 +95,9 @@ public class SimControl : MonoBehaviour
         //Load all the prefabs we are going to use.
         InfoTextPrefab = Resources.Load("Prefabs/InfoText") as GameObject;
         StaticInfoTextPrefab = Resources.Load("Prefabs/StaticInfoText") as GameObject;
-        EnemyType1Prefab = Resources.Load("Prefabs/EliteEnemy") as GameObject;
-        EnemyType2Prefab = Resources.Load("Prefabs/MeleeEnemy") as GameObject;
-        EnemyType3Prefab = Resources.Load("Prefabs/SniperEnemy") as GameObject;
+        EnemyType1Prefab = Resources.Load("Prefabs/MeleeEnemy") as GameObject;
+        EnemyType2Prefab = Resources.Load("Prefabs/SniperEnemy") as GameObject;
+        EnemyType3Prefab = Resources.Load("Prefabs/EliteEnemy") as GameObject;
     }
 
     //Update is called once per frame
@@ -220,9 +220,9 @@ public class SimControl : MonoBehaviour
         if (RoundCount % 3 == 0)
             Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
         else if (RoundCount % 3 == 1)
-            Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Maybe adjust the starting X or Y a bit for groups.
+            Instantiate(EnemyType2Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Maybe adjust the starting X or Y a bit for groups.
         else if (RoundCount % 3 == 2)
-            Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //You'll really want these to be an array/dictionary of prefabs eventually.
+            Instantiate(EnemyType3Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //You'll really want these to be an array/dictionary of prefabs eventually.
         //Note that this just cycles through enemy types, but you'll need more structure than this.
         //Each fight should be one AI type against one enemy type multiple times. And then each AI type
         //against a group of the same type multiple times. And then each AI type against a mixed group
