@@ -2525,7 +2525,7 @@ MonoBehaviour:
   MaxHitPoints: 325
   MoveSpeed: 1.2
   MaxStamina: 150
-  OptimalRange: 5
+  OptimalRange: 3
   StaminaStun: 2
   HitPoints: 200
   Stamina: 10

@@ -355,7 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHitPoints: 200
   MoveSpeed: 0.25
-  OptimalRange: 10
+  OptimalRange: 7
   HitPoints: 200
   StunLeft: 0
   Target: {fileID: 0}
