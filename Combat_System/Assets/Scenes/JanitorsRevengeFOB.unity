@@ -2524,7 +2524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHitPoints: 325
   MoveSpeed: 1.2
-  MaxStamina: 150
+  MaxStamina: 110
   OptimalRange: 3
   StaminaStun: 2
   HitPoints: 200

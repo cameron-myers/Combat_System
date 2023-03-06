@@ -116,7 +116,7 @@ public class Hero : MonoBehaviour
 
         }
         //if stun is done, reset stamina
-        if (StunLeft == 0.0f)
+        if (StunLeft <= 0.0f && Stamina <= 0.0f)
         {
             StunLeft = -0.001f;
             Stamina = MaxStamina;
