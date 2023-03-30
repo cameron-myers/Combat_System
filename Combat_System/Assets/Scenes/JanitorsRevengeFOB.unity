@@ -1122,15 +1122,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c05c73910caf1498c1346151bc1f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageEnemy: 10
-  DamageSelf: 5
-  StunSelf: 1
-  StunEnemy: 5
-  EffectsList: 020000000300000001000000
-  StaminaCost: 15
+  EffectValues:
+  - 0
+  - 5
+  - 0
+  - 10
+  AOERange: 3
+  EffectsList: 0300000001000000
+  AOEList: 03000000
+  StaminaCost: 25
   MaximumRange: 15
   Inactive: 0
-  CooldownTime: 10
+  CooldownTime: 15
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
   ParentHero: {fileID: 0}
@@ -1450,11 +1453,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c05c73910caf1498c1346151bc1f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageEnemy: 30
-  DamageSelf: 1
-  StunSelf: 1
-  StunEnemy: 1
+  EffectValues:
+  - 0
+  - 0
+  - 0
+  - 30
+  AOERange: 2
   EffectsList: 03000000
+  AOEList: 
   StaminaCost: 10
   MaximumRange: 3
   Inactive: 0
@@ -2522,9 +2528,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c89209401fcfc574dbccb9e4ed27636d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHitPoints: 325
+  MaxHitPoints: 350
   MoveSpeed: 1.2
-  MaxStamina: 110
+  MaxStamina: 100
   OptimalRange: 3
   StaminaStun: 2
   HitPoints: 200
@@ -2701,11 +2707,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c05c73910caf1498c1346151bc1f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageEnemy: 1
-  DamageSelf: 1
-  StunSelf: 1
-  StunEnemy: 2
+  EffectValues:
+  - 0
+  - 2
+  - 0
+  - 0
+  AOERange: 2
   EffectsList: 01000000
+  AOEList: 
   StaminaCost: 5
   MaximumRange: 7
   Inactive: 0
@@ -2810,11 +2819,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c05c73910caf1498c1346151bc1f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageEnemy: 15
-  DamageSelf: 5
-  StunSelf: 3
-  StunEnemy: 1
+  EffectValues:
+  - 0
+  - 0
+  - 1
+  - 15
+  AOERange: 2
   EffectsList: 03000000
+  AOEList: 
   StaminaCost: 5
   MaximumRange: 4
   Inactive: 0
@@ -2893,9 +2905,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6deaac7b45ff9bd4086939ab628a4a6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Fights: 1
-  Rounds: 5
-  RoundDelay: 3
+  Fights: 3
+  Rounds: 6
+  RoundDelay: 5
 --- !u!4 &1788695466
 Transform:
   m_ObjectHideFlags: 0

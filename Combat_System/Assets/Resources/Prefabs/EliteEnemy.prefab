@@ -305,8 +305,8 @@ MonoBehaviour:
   Target: {fileID: 0}
   HealthBar: {fileID: 0}
   StunBar: {fileID: 0}
-  AbilityOne: {fileID: 4478826130123384410}
-  AbilityTwo: {fileID: 4478826130762602734}
+  AbilityOne: {fileID: 3100659878695433509}
+  AbilityTwo: {fileID: 4607977111206731203}
   ParentEnemy: {fileID: 0}
 --- !u!1 &4478826130123384405
 GameObject:
@@ -317,7 +317,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4478826130123384411}
-  - component: {fileID: 4478826130123384410}
+  - component: {fileID: 3100659878695433509}
   m_Layer: 0
   m_Name: AbilityOne
   m_TagString: Untagged
@@ -341,7 +341,7 @@ Transform:
   m_Father: {fileID: 4478826129968344887}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4478826130123384410
+--- !u!114 &3100659878695433509
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -353,13 +353,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79a8d4f3daf33d40b36b8c4961690e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageEnemy: 10
-  DamageSelf: 1
-  StunSelf: 1
-  StunEnemy: 1
+  EffectValues:
+  - 0
+  - 0
+  - 0
+  - 10
+  - 0
   EffectsList: 03000000
-  CooldownTime: 0.5
-  MaximumRange: 4
+  CooldownTime: 1
+  MaximumRange: 5
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
@@ -471,7 +473,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4478826130762602729}
-  - component: {fileID: 4478826130762602734}
+  - component: {fileID: 4607977111206731203}
   m_Layer: 0
   m_Name: AbilityTwo
   m_TagString: Untagged
@@ -495,7 +497,7 @@ Transform:
   m_Father: {fileID: 4478826129968344887}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4478826130762602734
+--- !u!114 &4607977111206731203
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -507,13 +509,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79a8d4f3daf33d40b36b8c4961690e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageEnemy: 10
-  DamageSelf: 1
-  StunSelf: 1
-  StunEnemy: 1
-  EffectsList: 03000000
-  CooldownTime: 3
-  MaximumRange: 6
+  EffectValues:
+  - 0
+  - 1
+  - 0
+  - 15
+  - 0
+  EffectsList: 0300000001000000
+  CooldownTime: 4
+  MaximumRange: 8
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}

@@ -17,12 +17,18 @@ Description:
 *******************************************************************************/
 
 //Standard Unity component libraries
+
+using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices; //Not needed in this file, but here just in case.
+using System.Runtime.CompilerServices;
+using Unity.Burst;
+using Unity.VisualScripting; //Not needed in this file, but here just in case.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
 using UnityEngine.UI; //This is here so we don't have to type out longer names for UI components.
+
+
 
 //Inherits from MonoBehavior like all normal Unity components do...
 //Remember that the class name MUST be identical to the file name!
@@ -31,30 +37,40 @@ public class HeroAbility : MonoBehaviour
 
     public enum Effect
     {
-        StunSelf,
-        StunOther,
-        DamageSelf,
-        DamageTarget,
+        StunSelf=0,
+        StunOther=1,
+        DamageSelf=2,
+        DamageTarget=3,
+        cCount
     }
 
-
     //Properties that define the ability's cooldown time, damage done, power used, range, etc.
-
     [HideInInspector]
+    public List<float> EffectValues = new List<float>() { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+
+    public List<float> effectValues
+    {
+        get => EffectValues;
+        set => EffectValues = value;
+    }
+
+    public float AOERange = 2.0f;
+    /*[HideInInspector]
     public float DamageEnemy = 1.0f;
     [HideInInspector]
     public float DamageSelf = 1.0f;
     [HideInInspector]
     public float StunSelf = 1.0f;
     [HideInInspector]
-    public float StunEnemy = 1.0f;
+    public float StunEnemy = 1.0f;*/
 
     [SerializeField] public List<Effect> EffectsList = new List<Effect>();
+    [SerializeField] public List<Effect> AOEList = new List<Effect>();
 
     public float StaminaCost = 1.0f;
     public float MaximumRange = 10.0f;
     public bool Inactive = false; //Make an ability inactive to temporarily or permanently not have it used.
-
+    
 
     public float CooldownTime = 1.0f;
 
@@ -161,16 +177,26 @@ public class HeroAbility : MonoBehaviour
     
     public void DoEffect(Effect fx)
     {
+        //check if fx is AOE
+        if (AOEList.Contains(fx))
+        {
+            //generate and carryout effect
+            DoAOE(GenerateAOEList(ParentHero.Target,AOERange),fx, EffectValues[(int)fx]);
+            return;
+        }
+        //no aoe
         //do each effect based on the enum passed in
         if (fx == Effect.DamageTarget)
         {
-            if (ParentHero.Target.TakeDamage(DamageEnemy) == true)
+
+            if (ParentHero.Target.TakeDamage(EffectValues[(int)Effect.DamageTarget]) == true)
                 ParentHero.Target = ParentHero.FindTarget(); //If the target is dead, find a new one.
 
         }
         else if (fx == Effect.DamageSelf)
         {
-            if (ParentHero.TakeDamage(DamageSelf) == true)
+
+            if (ParentHero.TakeDamage(EffectValues[(int)Effect.DamageSelf]) == true)
             {
                 ParentHero.Target.Target = null; //If the parent is dead, set enemies target to null
             }
@@ -179,13 +205,84 @@ public class HeroAbility : MonoBehaviour
         }
         else if (fx == Effect.StunSelf)
         {
-            ParentHero.Stun(StunSelf);
+            
+
+            ParentHero.Stun(EffectValues[(int)Effect.StunSelf]);
         }
         else if (fx == Effect.StunOther)
         {
-            ParentHero.Target.Stun(StunEnemy);
+            
+            ParentHero.Target.Stun(EffectValues[(int)Effect.StunOther]);
         }
 
     }
+
+    private List<Enemy> GenerateAOEList(Enemy target, float range)
+    {
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        List<Enemy> aoeEnemies = new List<Enemy>();
+        aoeEnemies.Add(target);
+
+        if(enemies.Length <= 0) return null;
+        //loop through the enemies on the screen
+        foreach (Enemy enemy in enemies)
+        {
+            //check if its in range
+            if (Vector3.Distance(target.transform.position, enemy.transform.position) <= range)
+            {
+                //add to the list 
+                aoeEnemies.Add(enemy);
+            }
+        }
+
+        return aoeEnemies;
+    }
+
+    private void DoAOE(List<Enemy> aoeList, Effect effect, float effectParam)
+    {
+        //invoke the effect function on each enemy in the aoe list
+        ParentHero.Target = ParentHero.FindTargetAOE(this);
+
+        
+        GameObject AOEsig = Instantiate(SimControl.AOESignifierPrefab, ParentHero.Target.transform.localPosition,Quaternion.Euler(0, 0, 0));
+        //set range size
+        AOEsig.transform.localScale *= AOERange;
+        //kill
+        Destroy(AOEsig, 1.0f);
+
+        switch (effect)
+        {
+            case Effect.DamageTarget:
+            {
+                foreach (Enemy enemy in aoeList)
+                {
+                    enemy.TakeDamage(effectParam);
+                }
+                break;
+            }
+            case Effect.DamageSelf:
+            {
+                ParentHero.TakeDamage(effectParam);
+                break;
+            }
+            case Effect.StunSelf:
+            { 
+                ParentHero.Stun(effectParam);
+                break;
+            }
+            case Effect.StunOther:
+            {
+                foreach (Enemy enemy in aoeList)
+                {
+                        enemy.Target.Stun(effectParam);
+                }
+                break;
+
+            }
+        }
+
+    }
+    
+
 }
 

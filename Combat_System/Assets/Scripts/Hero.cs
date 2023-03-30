@@ -19,7 +19,8 @@ Description:
 using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic;
-using Unity.Burst.Intrinsics; //Not needed in this file, but here just in case.
+using Unity.Burst.Intrinsics;
+using Unity.VisualScripting; //Not needed in this file, but here just in case.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -175,6 +176,9 @@ public class Hero : MonoBehaviour
         Enemy target = null;
         if (Target != null && Target.HitPoints > 0.0f) //Start with our current target if it is still alive.
             target = Target;
+        
+        //FIND LOWEST HP
+        
         //Find the enemy with the lowest HP.
         float lowestHP = float.MaxValue;
         if (target) //Start with the current target so any ties don't cause target switching.
@@ -188,6 +192,53 @@ public class Hero : MonoBehaviour
                 lowestHP = enemy.HitPoints;
             }
         }
+        
+
+
+        return target;
+    }
+
+
+    public Enemy FindTargetAOE(HeroAbility ability)
+    {
+        //Find all the enemies in the scene.
+        var enemies = FindObjectsOfType<Enemy>();
+        if (enemies.Length == 0) //No enemies means no target.
+            return null;
+        //There are enemies, now find the best one.
+        Enemy target = null;
+        if (Target != null && Target.HitPoints > 0.0f) //Start with our current target if it is still alive.
+            target = Target;
+
+        //FIND LOWEST HP
+        //look for most enemies in AOE range
+        //Find the enemy with the lowest HP.
+        float lowestDensity = float.MinValue;
+
+        //Loop through all the enemies to find the weakest enemy.
+        foreach (Enemy enemy in enemies)
+        {
+            int density = 0;
+            //check the rest of the enemies
+            foreach (Enemy enemysub in enemies)
+            {
+                //check if enemy is in abilities range
+                if (Vector2.Distance(enemy.transform.localPosition, enemysub.transform.localPosition) < ability.AOERange )
+                {
+                    //tally density
+                    ++density;
+                }
+            }
+            //check if density was greater 
+            if (density > lowestDensity)
+            {
+                //set target and update min density
+                target = enemy;
+                lowestDensity = density;
+            }
+
+        }
+
         return target;
     }
 

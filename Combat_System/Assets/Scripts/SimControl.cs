@@ -30,6 +30,10 @@ public class SimControl : MonoBehaviour
     public static bool AutoMode = false;
     //Does the simulation start in Fast mode?
     public static bool FastMode = false;
+
+    public static bool MixedMode = false;
+
+    public static bool GroupMode = false;
     //This is the delta time the simulation uses,
     //which is artificially increased when in fast mode.
     public static float DT;
@@ -75,6 +79,9 @@ public class SimControl : MonoBehaviour
     public static GameObject EnemyType1Prefab; //Should really be an array or dictionary.
     public static GameObject EnemyType2Prefab;
     public static GameObject EnemyType3Prefab;
+    public static GameObject RangeSignifierPrefab;
+    public static GameObject AOESignifierPrefab;
+
 
     //Start is called before the first frame update
     void Start()
@@ -98,6 +105,9 @@ public class SimControl : MonoBehaviour
         EnemyType1Prefab = Resources.Load("Prefabs/MeleeEnemy") as GameObject;
         EnemyType2Prefab = Resources.Load("Prefabs/SniperEnemy") as GameObject;
         EnemyType3Prefab = Resources.Load("Prefabs/EliteEnemy") as GameObject;
+        RangeSignifierPrefab = Resources.Load("Prefabs/RangeSig") as GameObject;
+        AOESignifierPrefab = Resources.Load("Prefabs/AOESig") as GameObject;
+
     }
 
     //Update is called once per frame
@@ -142,6 +152,18 @@ public class SimControl : MonoBehaviour
             Defeats = 0;
             DamageDone = 0;
             TotalFightTime = 0;
+        }
+
+        //on press "G" toggle group mode
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            GroupMode = !GroupMode;
+        }
+
+        //on "M" press toggle mixed mode
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MixedMode = !MixedMode;
         }
 
         //Get the actual delta time, but cap it at one-tenth of

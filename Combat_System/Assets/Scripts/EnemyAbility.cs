@@ -17,6 +17,8 @@ Description:
 *******************************************************************************/
 
 //Standard Unity component libraries
+
+using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic; //Not needed in this file, but here just in case.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
@@ -29,20 +31,16 @@ public class EnemyAbility : MonoBehaviour
 
     public enum Effect
     {
-        StunSelf,
-        StunOther,
-        DamageSelf,
-        DamageTarget,
+        StunSelf=0,
+        StunOther=1,
+        DamageSelf=2,
+        DamageTarget=3,
+        cCount
     }
 
     [HideInInspector]
-    public float DamageEnemy = 1.0f;
-    [HideInInspector]
-    public float DamageSelf = 1.0f;
-    [HideInInspector]
-    public float StunSelf = 1.0f;
-    [HideInInspector]
-    public float StunEnemy = 1.0f;
+    public List<float> EffectValues = new List<float>(){0.0f,0.0f,0.0f,0.0f,0.0f};
+
 
 
     [SerializeField] public List<Effect> EffectsList = new List<Effect>();
@@ -64,6 +62,7 @@ public class EnemyAbility : MonoBehaviour
     //Start is called before the first frame update
     void Start()
     {
+
         //Get the parent.
         ParentEnemy = transform.parent.GetComponent<Enemy>();
         //Find the cooldown timer gameobject, which must be a child of this object.
@@ -155,25 +154,32 @@ public class EnemyAbility : MonoBehaviour
         //do each effect based on the enum passed in
         if (fx == Effect.DamageTarget)
         {
-            if (ParentEnemy.Target.TakeDamage(DamageEnemy) == true)
+
+            if (ParentEnemy.Target.TakeDamage(EffectValues[(int)Effect.DamageTarget]) == true)
                 ParentEnemy.Target = null; //If the target is dead, find a new one.
 
         }
         else if (fx == Effect.DamageSelf)
         {
-            if (ParentEnemy.TakeDamage(DamageSelf) == true)
+
+            if (ParentEnemy.TakeDamage(EffectValues[(int)Effect.DamageSelf]) == true)
                 ParentEnemy.Target.Target = null; //If the parent is dead, set enemies target to null
 
         }
         else if (fx == Effect.StunSelf)
         {
-            ParentEnemy.Stun(StunSelf);
+
+            ParentEnemy.Stun(EffectValues[(int)Effect.StunSelf]);
         }
         else if (fx == Effect.StunOther)
         {
-            ParentEnemy.Target.Stun(StunEnemy);
+
+            ParentEnemy.Target.Stun(EffectValues[(int)Effect.StunOther]);
         }
 
     }
 
 }
+
+
+

@@ -27,11 +27,18 @@ public class EditorEnemyAbility : Editor
 
             EnemyAbility myBehaviour = target as EnemyAbility;
 
-            //target.myBool = EditorGUILayout.Toggle("myBool", target.myBool);
-            
+        //target.myBool = EditorGUILayout.Toggle("myBool", target.myBool);
+        if(myBehaviour.EffectsList.Count == 0 ) return;
 
-            //this is for damage to enemy
-            if (myBehaviour.EffectsList.Contains(EnemyAbility.Effect.DamageTarget))
+        foreach (EnemyAbility.Effect effect in myBehaviour.EffectsList)
+        {
+            if(effect == EnemyAbility.Effect.cCount) break;
+            myBehaviour.EffectValues[(int)effect] = EditorGUILayout.FloatField(effect.ToString(), myBehaviour.EffectValues[(int)effect]);
+        }
+
+        /*
+        //this is for damage to enemy
+        if (myBehaviour.EffectsList.Contains(EnemyAbility.Effect.DamageTarget))
             {
                 myBehaviour.DamageEnemy = EditorGUILayout.FloatField("Damage to Enemy", myBehaviour.DamageEnemy);
 
@@ -55,5 +62,6 @@ public class EditorEnemyAbility : Editor
                 myBehaviour.StunSelf = EditorGUILayout.FloatField("Stun length to Self", myBehaviour.StunSelf);
 
             }
+        */
     }
 }
