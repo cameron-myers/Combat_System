@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
     public float MaxHitPoints = 200;
     public float MoveSpeed = 0.1f;
     public float OptimalRange = 5.0f;
+    //this contributes to sorting the enemy list
+    public float strength;
 
     [HideInInspector]
     public float HitPoints = 200; //Current hit points.

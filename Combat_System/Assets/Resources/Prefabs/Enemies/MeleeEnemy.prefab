@@ -416,6 +416,7 @@ MonoBehaviour:
   MaxHitPoints: 350
   MoveSpeed: 0.5
   OptimalRange: 2
+  strength: 1
   HitPoints: 200
   StunLeft: 0
   Target: {fileID: 0}

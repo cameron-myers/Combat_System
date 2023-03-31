@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 4478826129968344886}
   - component: {fileID: 4478826129968344884}
   m_Layer: 0
-  m_Name: EliteEnemy 1
+  m_Name: EliteEnemyTough
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -300,6 +300,7 @@ MonoBehaviour:
   MaxHitPoints: 420
   MoveSpeed: 0.4
   OptimalRange: 6
+  strength: 7
   HitPoints: 200
   StunLeft: 0
   Target: {fileID: 0}

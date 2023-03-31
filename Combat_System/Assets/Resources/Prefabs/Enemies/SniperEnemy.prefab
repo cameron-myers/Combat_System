@@ -248,7 +248,7 @@ MonoBehaviour:
   - 15
   - 0
   EffectsList: 0300000001000000
-  CooldownTime: 2.8
+  CooldownTime: 3
   MaximumRange: 10
   Inactive: 0
   CooldownLeft: 0
@@ -266,7 +266,7 @@ GameObject:
   - component: {fileID: 8069126012661638521}
   - component: {fileID: 8069126012661638523}
   m_Layer: 0
-  m_Name: ToughMeleeEnemy
+  m_Name: SniperEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -332,8 +332,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: c0ae5117b86e15044807fb1120348888, type: 3}
-  m_Color: {r: 0.9716981, g: 0.2062567, b: 0.7777726, a: 1}
+  m_Sprite: {fileID: 21300000, guid: bc391fda80fa95d45aa848d4c2170a05, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -358,6 +358,7 @@ MonoBehaviour:
   MaxHitPoints: 200
   MoveSpeed: 0.25
   OptimalRange: 7
+  strength: 4
   HitPoints: 200
   StunLeft: 0
   Target: {fileID: 0}
@@ -415,11 +416,11 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 15
+  - 10
   - 0
   EffectsList: 03000000
   CooldownTime: 1
-  MaximumRange: 5
+  MaximumRange: 8
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}

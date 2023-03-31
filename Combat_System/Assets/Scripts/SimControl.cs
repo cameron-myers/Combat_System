@@ -18,7 +18,8 @@ Description:
 //Standard Unity component libraries
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic; //Not needed in this file, but here just in case.
-using System.IO; //Needed for writing telemetry data to a file.
+using System.IO;
+using UnityEditor.PackageManager; //Needed for writing telemetry data to a file.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
 using UnityEngine.UI; //This is here so we don't have to type out longer names for UI components.
 
@@ -76,9 +77,10 @@ public class SimControl : MonoBehaviour
 	//have to load them each time.
     public static GameObject InfoTextPrefab;
     public static GameObject StaticInfoTextPrefab;
-    public static GameObject EnemyType1Prefab; //Should really be an array or dictionary.
-    public static GameObject EnemyType2Prefab;
-    public static GameObject EnemyType3Prefab;
+
+    [SerializeField]
+    public static List<GameObject> EnemyTypes;
+
     public static GameObject RangeSignifierPrefab;
     public static GameObject AOESignifierPrefab;
 
@@ -102,12 +104,10 @@ public class SimControl : MonoBehaviour
         //Load all the prefabs we are going to use.
         InfoTextPrefab = Resources.Load("Prefabs/InfoText") as GameObject;
         StaticInfoTextPrefab = Resources.Load("Prefabs/StaticInfoText") as GameObject;
-        EnemyType1Prefab = Resources.Load("Prefabs/MeleeEnemy") as GameObject;
-        EnemyType2Prefab = Resources.Load("Prefabs/SniperEnemy") as GameObject;
-        EnemyType3Prefab = Resources.Load("Prefabs/EliteEnemy") as GameObject;
         RangeSignifierPrefab = Resources.Load("Prefabs/RangeSig") as GameObject;
         AOESignifierPrefab = Resources.Load("Prefabs/AOESig") as GameObject;
-
+        EnemyTypes = new List<GameObject>(Resources.LoadAll<GameObject>("Prefabs/Enemies"));
+        EnemyTypes.Sort((p1, p2) => p1.GetComponent<Enemy>().strength.CompareTo(p2.GetComponent<Enemy>().strength));
     }
 
     //Update is called once per frame
@@ -239,12 +239,11 @@ public class SimControl : MonoBehaviour
         //Spawn enemies by calling the Unity engine function Instantiate().
         //Pass in the appropriate prefab, its position, its rotation (90 degrees),
         //and its parent (none).
-        if (RoundCount % 3 == 0)
-            Instantiate(EnemyType1Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-        else if (RoundCount % 3 == 1)
-            Instantiate(EnemyType2Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Maybe adjust the starting X or Y a bit for groups.
-        else if (RoundCount % 3 == 2)
-            Instantiate(EnemyType3Prefab, new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //You'll really want these to be an array/dictionary of prefabs eventually.
+        if (!GroupMode)
+        {
+            Instantiate(EnemyTypes[RoundCount-1 % EnemyTypes.Count], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+        }
+
         //Note that this just cycles through enemy types, but you'll need more structure than this.
         //Each fight should be one AI type against one enemy type multiple times. And then each AI type
         //against a group of the same type multiple times. And then each AI type against a mixed group
@@ -313,4 +312,5 @@ public class SimControl : MonoBehaviour
         //Set the text.
         infotext.text = text;
     }
+
 }
