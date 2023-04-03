@@ -1060,7 +1060,7 @@ MonoBehaviour:
 
     7 Range
 
-    2s Stun To Enemy
+    2s Stun To Enemy(AOE)
 
     5 Stamina'
 --- !u!222 &524810328
@@ -1349,7 +1349,7 @@ MonoBehaviour:
   AOERange: 5
   EffectsList: 0300000001000000
   AOEList: 0300000001000000
-  StaminaCost: 25
+  StaminaCost: 20
   MaximumRange: 15
   Inactive: 0
   CooldownTime: 10
@@ -2330,7 +2330,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -205}
-  m_SizeDelta: {x: 180, y: 180}
+  m_SizeDelta: {x: 204.29, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1248410154
 MonoBehaviour:
@@ -2369,14 +2369,12 @@ MonoBehaviour:
 
     15 Range
 
-    10 Damage to Enemy
+    25 Damage to Enemy(AOE)
 
-    5 Damage to Self
+    5 Stun to
+    Enemy(AOE)
 
-    5
-    Stun to Enemy
-
-    15 Stamina'
+    20 Stamina'
 --- !u!222 &1248410155
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3431,6 +3429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MixCount: 3
+  GroupCount: 3
   Fights: 3
   Rounds: 6
   RoundDelay: 5

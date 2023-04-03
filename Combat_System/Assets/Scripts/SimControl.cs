@@ -21,7 +21,7 @@ using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic; //Not needed in this file, but here just in case.
 using System.IO;
-using UnityEditor.PackageManager; //Needed for writing telemetry data to a file.
+//using UnityEditor.PackageManager; //Needed for writing telemetry data to a file.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
 using UnityEngine.UI;
 using Random = UnityEngine.Random; //This is here so we don't have to type out longer names for UI components.
