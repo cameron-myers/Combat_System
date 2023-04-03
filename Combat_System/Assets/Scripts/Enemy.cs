@@ -82,6 +82,11 @@ public class Enemy : MonoBehaviour
         {
             StunLeft = Mathf.Clamp(StunLeft - Time.deltaTime, -0.1f, StunTime);
         }
+        //if dead destroy the objecta
+        if (HitPoints <= 0.0f)
+        {
+            Destroy(this.gameObject, 0.25f);
+        }
     }
 
     //Try to stay close to optimal range.

@@ -274,7 +274,7 @@ public class HeroAbility : MonoBehaviour
             {
                 foreach (Enemy enemy in aoeList)
                 {
-                        enemy.Target.Stun(effectParam);
+                        enemy.Stun(effectParam);
                 }
                 break;
 

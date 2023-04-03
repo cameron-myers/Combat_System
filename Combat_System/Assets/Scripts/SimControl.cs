@@ -16,12 +16,15 @@ Description:
 *******************************************************************************/
 
 //Standard Unity component libraries
+
+using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic; //Not needed in this file, but here just in case.
 using System.IO;
 using UnityEditor.PackageManager; //Needed for writing telemetry data to a file.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
-using UnityEngine.UI; //This is here so we don't have to type out longer names for UI components.
+using UnityEngine.UI;
+using Random = UnityEngine.Random; //This is here so we don't have to type out longer names for UI components.
 
 //Inherits from MonoBehavior like all normal Unity components do...
 //Remember that the class name MUST be identical to the file name!
@@ -33,7 +36,12 @@ public class SimControl : MonoBehaviour
     public static bool FastMode = false;
 
     public static bool MixedMode = false;
-
+    [SerializeField]
+    public int MixCount = 3;
+    
+    [SerializeField]
+    public int GroupCount = 3;
+    
     public static bool GroupMode = false;
     //This is the delta time the simulation uses,
     //which is artificially increased when in fast mode.
@@ -239,10 +247,47 @@ public class SimControl : MonoBehaviour
         //Spawn enemies by calling the Unity engine function Instantiate().
         //Pass in the appropriate prefab, its position, its rotation (90 degrees),
         //and its parent (none).
-        if (!GroupMode)
+
+        //3 different combos
+        if(MixedMode)
         {
-            Instantiate(EnemyTypes[RoundCount-1 % EnemyTypes.Count], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+            switch (Random.Range(0, MixCount))
+            {
+                case 0:
+                    Instantiate(EnemyTypes[0], new Vector3(StartingX, Random.Range(-2.0f, 2.3f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-2.0f, 2.3f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[2], new Vector3(StartingX, Random.Range(-2.0f, 2.3f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    break;
+                case 1:
+                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-2.0f, 2.3f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[3], new Vector3(StartingX, Random.Range(-2.0f, 2.3f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[5], new Vector3(StartingX, Random.Range(-2.0f, 2.3f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    break;
+
+                case 2:
+                    Instantiate(EnemyTypes[2], new Vector3(StartingX, Random.Range(-2.0f, 2.3f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[4], new Vector3(StartingX, Random.Range(-2.0f, 2.3f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-2.0f, 2.3f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    break;
+
+                default: break;
+            }
         }
+        //just group mode, all same enemies
+        else if (GroupMode)
+        {
+            for(int i = 0; i < GroupCount; ++i)
+            { 
+                Instantiate(EnemyTypes[Random.Range(0, EnemyTypes.Count)], new Vector3(StartingX, Random.Range(-2.0f, 2.3f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+            }
+        }
+        //Just a single enemy
+        else
+        {
+            Instantiate(EnemyTypes[RoundCount - 1 % EnemyTypes.Count], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+        }
+
+
 
         //Note that this just cycles through enemy types, but you'll need more structure than this.
         //Each fight should be one AI type against one enemy type multiple times. And then each AI type
