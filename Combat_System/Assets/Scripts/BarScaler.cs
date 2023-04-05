@@ -52,18 +52,22 @@ public class BarScaler : MonoBehaviour
     //Update is called once per frame
     void Update()
     {
-		//Are we actually interpolating to a new scale?
-        if (InterpolationTime > 0.0f)
-        {
-			//Reduce the interpolation time by the delta time, but don't let it go below zero.
-            InterpolationTime = Mathf.Clamp(InterpolationTime - Time.deltaTime, 0.0f, 1.0f);
-			//If this object is flipped, we need to do things slighty differently, but either way
-			//we pass in the interpolated scale (note that the lerp() function could be used here).
-            if (Rotated == true)
-                SetScaleRotated(TargetScale + ((CurrentScale - TargetScale) * InterpolationTime) / ScaleTime);
-            else
-                SetScaleStandard(TargetScale + ((CurrentScale - TargetScale) * InterpolationTime) / ScaleTime);
-        }
+        if (SimControl.FastMode) return;
+            //Are we actually interpolating to a new scale?
+            if (InterpolationTime > 0.0f)
+            {
+                //Reduce the interpolation time by the delta time, but don't let it go below zero.
+                InterpolationTime = Mathf.Clamp(InterpolationTime - Time.deltaTime, 0.0f, 1.0f);
+                //If this object is flipped, we need to do things slighty differently, but either way
+                //we pass in the interpolated scale (note that the lerp() function could be used here).
+                if (Rotated == true)
+                    SetScaleRotated(TargetScale + ((CurrentScale - TargetScale) * InterpolationTime) / ScaleTime);
+                else
+                    SetScaleStandard(TargetScale + ((CurrentScale - TargetScale) * InterpolationTime) / ScaleTime);
+            }
+
+
+
     }
 
 	//Pass in a 0.0 to 1.0 value for the new scale to be set for this frame.

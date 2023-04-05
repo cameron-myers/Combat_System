@@ -124,7 +124,7 @@ public class HeroAbility : MonoBehaviour
         if (Inactive)
             return false;
         //I'm dead.
-        if (ParentHero.HitPoints == 0.0f)
+        if (ParentHero.HitPoints <= 0.0f)
             return false;
         //No target.
         if (ParentHero.Target == null)
@@ -243,12 +243,15 @@ public class HeroAbility : MonoBehaviour
         //invoke the effect function on each enemy in the aoe list
         ParentHero.Target = ParentHero.FindTargetAOE(this);
 
-        
-        GameObject AOEsig = Instantiate(SimControl.AOESignifierPrefab, ParentHero.Target.transform.localPosition,Quaternion.Euler(0, 0, 0));
-        //set range size
-        AOEsig.transform.localScale *= AOERange;
-        //kill
-        Destroy(AOEsig, 1.0f);
+        if (!SimControl.FastMode)
+        {
+            GameObject AOEsig = Instantiate(SimControl.AOESignifierPrefab, ParentHero.Target.transform.localPosition, Quaternion.Euler(0, 0, 0));
+            //set range size
+            AOEsig.transform.localScale *= AOERange;
+            //kill
+            Destroy(AOEsig, 1.0f);
+
+        }
 
         switch (effect)
         {

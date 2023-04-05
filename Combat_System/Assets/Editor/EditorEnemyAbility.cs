@@ -30,10 +30,16 @@ public class EditorEnemyAbility : Editor
         //target.myBool = EditorGUILayout.Toggle("myBool", target.myBool);
         if(myBehaviour.EffectsList.Count == 0 ) return;
 
-        foreach (EnemyAbility.Effect effect in myBehaviour.EffectsList)
+        EnemyAbility.Effect effect = EnemyAbility.Effect.StunSelf;
+
+        for (int i = 0; i < myBehaviour.EffectValues.Count; ++i)
         {
-            if(effect == EnemyAbility.Effect.cCount) break;
-            myBehaviour.EffectValues[(int)effect] = EditorGUILayout.FloatField(effect.ToString(), myBehaviour.EffectValues[(int)effect]);
+            if(i == (int)EnemyAbility.Effect.cCount) break;
+            if (myBehaviour.EffectsList.Contains(effect))
+            {
+                myBehaviour.EffectValues[i] = EditorGUILayout.FloatField(effect.ToString(), myBehaviour.EffectValues[i]);
+            }
+            ++effect;
         }
 
         /*

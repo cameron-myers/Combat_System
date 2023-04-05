@@ -88,15 +88,17 @@ public class Hero : MonoBehaviour
         DoMovement();
         if (SimControl.AutoMode == true) //Let an "AI" determine which abilities to use.
         {
-            if (SimControl.CurrentAI == "Random")
+            if (SimControl.AI_List[SimControl.CurrentAI] == SimControl.PlayerAIMode.AbilityRandom)
                 UseRandomAbility();
-            else if (SimControl.CurrentAI == "Spam1")
+            else if (SimControl.AI_List[SimControl.CurrentAI] == SimControl.PlayerAIMode.AbilitySmart)
+                UseSmartAbility();
+            else if (SimControl.AI_List[SimControl.CurrentAI] == SimControl.PlayerAIMode.AbilityOne)
                 UseAbility(1);
-            else if (SimControl.CurrentAI == "Spam2")
+            else if (SimControl.AI_List[SimControl.CurrentAI] == SimControl.PlayerAIMode.AbilityTwo)
                 UseAbility(2);
-            else if (SimControl.CurrentAI == "Spam3")
+            else if (SimControl.AI_List[SimControl.CurrentAI] == SimControl.PlayerAIMode.AbilityThree)
                 UseAbility(3);
-            else if (SimControl.CurrentAI == "Spam4")
+            else if (SimControl.AI_List[SimControl.CurrentAI] == SimControl.PlayerAIMode.AbilityFour)
                 UseAbility(4);
         }
         else //Let the player select which abilities to use.
@@ -113,8 +115,7 @@ public class Hero : MonoBehaviour
 
         if (StunLeft > 0.0f)
         {
-            StunLeft = Mathf.Clamp(StunLeft - Time.deltaTime, -0.1f, StunTime);
-
+            StunLeft = Mathf.Clamp(StunLeft - SimControl.DT, -0.1f, StunTime);
         }
         //if stun is done, reset stamina
         if (StunLeft <= 0.0f && Stamina <= 0.0f)
@@ -281,6 +282,23 @@ public class Hero : MonoBehaviour
         //inclusive. This is wrong and Unity should feel bad for doing this.
         return UseAbility(Random.Range(1, 5));
     }
+    public bool UseSmartAbility()
+    {
+
+        //prioritize ability 4,
+        if (AbilityFour.IsReady())
+            return UseAbility(4);
+        //if distance is far prioritize 3
+        else if(AbilityThree.IsReady())
+            return UseAbility(3);
+        //all other cases random between 2 and 1
+        else if(AbilityTwo.IsReady())
+            return UseAbility(2);
+        else if (AbilityOne.IsReady())
+            return UseAbility(1);
+
+        return false;
+    }
 
     //Try to use a specific ability.
     public bool UseAbility(int abilityNumber)
@@ -295,6 +313,9 @@ public class Hero : MonoBehaviour
             return AbilityFour.Use();
         return false;
     }
+
+
+
 
     //Use a given amount of power.
     public void UseStamina(float stamina)
@@ -320,10 +341,14 @@ public class Hero : MonoBehaviour
             //Interpolate the hit point UI bar over half a second.
             HealthBar.InterpolateToScale(HitPoints / MaxHitPoints, 0.2f);
             //Create a temporary InfoText object to show the damage using the static Instantiate() function.
-            Text damageText = Object.Instantiate(SimControl.InfoTextPrefab, transform.position, Quaternion.identity, SimControl.Canvas.transform).GetComponent<Text>();
-            //Set the damage text to just the integer amount of the damage done.
-            //Uses the "empty string plus number" trick to make it a string.
-            damageText.text = "" + Mathf.Floor(damage);
+            if (!SimControl.FastMode)
+            {
+                Text damageText = Object.Instantiate(SimControl.InfoTextPrefab, transform.position, Quaternion.identity, SimControl.Canvas.transform).GetComponent<Text>();
+                //Set the damage text to just the integer amount of the damage done.
+                //Uses the "empty string plus number" trick to make it a string.
+                damageText.text = "" + Mathf.Floor(damage);
+            }
+
         }
         //Return true if dead.
         return (HitPoints <= 0.0f);
@@ -331,7 +356,7 @@ public class Hero : MonoBehaviour
 
     public void Stun(float stunTime)
     {
-        StunLeft = stunTime;
+        StunLeft = stunTime - Time.deltaTime;
         StunTime = stunTime;
         StunBar.InterpolateImmediate(1.0f);
         //Interpolate the hit 0 over stun time

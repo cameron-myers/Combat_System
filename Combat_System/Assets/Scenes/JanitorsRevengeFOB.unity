@@ -1683,7 +1683,7 @@ MonoBehaviour:
   EffectsList: 03000000
   AOEList: 
   StaminaCost: 10
-  MaximumRange: 3
+  MaximumRange: 5
   Inactive: 0
   CooldownTime: 4
   CooldownLeft: 0
@@ -3241,7 +3241,7 @@ MonoBehaviour:
   EffectsList: 01000000
   AOEList: 01000000
   StaminaCost: 5
-  MaximumRange: 7
+  MaximumRange: 8
   Inactive: 0
   CooldownTime: 10
   CooldownLeft: 0
@@ -3353,7 +3353,7 @@ MonoBehaviour:
   EffectsList: 03000000
   AOEList: 
   StaminaCost: 5
-  MaximumRange: 4
+  MaximumRange: 5
   Inactive: 0
   CooldownTime: 0.5
   CooldownLeft: 0
@@ -3435,6 +3435,7 @@ MonoBehaviour:
   Fights: 3
   Rounds: 6
   RoundDelay: 5
+  temp_AI_List: 000000000100000002000000030000000400000005000000
 --- !u!4 &1788695466
 Transform:
   m_ObjectHideFlags: 0

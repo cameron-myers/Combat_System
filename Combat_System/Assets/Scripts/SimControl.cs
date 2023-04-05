@@ -36,6 +36,8 @@ public class SimControl : MonoBehaviour
     public static bool FastMode = false;
 
     public static bool MixedMode = false;
+
+
     [SerializeField]
     public int MixCount = 3;
     
@@ -51,7 +53,21 @@ public class SimControl : MonoBehaviour
     public int Fights = 5;
     private int FightCount = 0;
     public static bool SimOver = false; //Have all the fights been completed?
-    public static string CurrentAI = "Random"; //What's the current type of AI for this fight?
+    public enum PlayerAIMode
+    {
+        AbilityOne,
+        AbilityTwo,
+        AbilityThree,
+        AbilityFour,
+        AbilityRandom,
+        AbilitySmart,
+        cCount
+    }
+
+    [SerializeField]
+    public static List<PlayerAIMode> AI_List;
+
+    public static int CurrentAI = 0; //What's the current type of AI for this fight?
 
     //How many rounds is each "fight"?
     public int Rounds = 5;
@@ -92,6 +108,9 @@ public class SimControl : MonoBehaviour
     public static GameObject RangeSignifierPrefab;
     public static GameObject AOESignifierPrefab;
 
+    [SerializeField]
+    public List<PlayerAIMode> temp_AI_List;
+
 
     //Start is called before the first frame update
     void Start()
@@ -116,6 +135,7 @@ public class SimControl : MonoBehaviour
         AOESignifierPrefab = Resources.Load("Prefabs/AOESig") as GameObject;
         EnemyTypes = new List<GameObject>(Resources.LoadAll<GameObject>("Prefabs/Enemies"));
         EnemyTypes.Sort((p1, p2) => p1.GetComponent<Enemy>().strength.CompareTo(p2.GetComponent<Enemy>().strength));
+        AI_List = temp_AI_List;
     }
 
     //Update is called once per frame
@@ -131,6 +151,8 @@ public class SimControl : MonoBehaviour
             if (SimOver == false) //Did the simulation just end?
             {
                 SimOver = true;
+                FastMode = false;
+
                 DataStream.Close(); //Don't forget to close the stream.
                 SpawnInfoText("SIMULATION OVER", true);
             }
@@ -154,7 +176,6 @@ public class SimControl : MonoBehaviour
             RoundStart = false;
             RoundOver = false;
             SimOver = false;
-            CurrentAI = "Random";
             RoundCount = 0;
             Victories = 0;
             Defeats = 0;
@@ -206,7 +227,7 @@ public class SimControl : MonoBehaviour
         //Player is dead.
         if (Player.HitPoints <= 0.0f)
         {
-            if (RoundOver == false) //Player just died.
+            if (RoundOver == false ) //Player just died.
             {
                 SpawnInfoText("DEFEAT...");
                 Defeats++;
@@ -244,24 +265,39 @@ public class SimControl : MonoBehaviour
             return;
         }
 
+
+
+
+
+        //Note that this just cycles through enemy types, but you'll need more structure than this.
+        //Each fight should be one AI type against one enemy type multiple times. And then each AI type
+        //against a group of the same type multiple times. And then each AI type against a mixed group
+        //multiple times. And possibly more.
+
+        //Call the Initialize() functions for the player.
+        Player.Initialize();
+
+        //Feedback is good...
+        SpawnInfoText("ROUND " + RoundCount); //Look! A string concatenation operator!
+
         //Spawn enemies by calling the Unity engine function Instantiate().
         //Pass in the appropriate prefab, its position, its rotation (90 degrees),
         //and its parent (none).
 
         //3 different combos
-        if(MixedMode)
+        if (MixedMode)
         {
             switch (Random.Range(0, MixCount))
             {
                 case 0:
-                    Instantiate(EnemyTypes[0], new Vector3(StartingX, Random.Range(-1.5f, 1.0f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-1.5f, 1.0f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-                    Instantiate(EnemyTypes[2], new Vector3(StartingX, Random.Range(-1.5f, 1.0f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[0], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[2], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
                     break;
                 case 1:
-                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-1.5f, 1.0f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-                    Instantiate(EnemyTypes[3], new Vector3(StartingX, Random.Range(-1.5f, 1.0f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-                    Instantiate(EnemyTypes[5], new Vector3(StartingX, Random.Range(-1.5f, 1.0f ), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[3], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                    Instantiate(EnemyTypes[5], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
                     break;
 
                 case 2:
@@ -278,7 +314,7 @@ public class SimControl : MonoBehaviour
         {
             int enemy_type = Random.Range(0, EnemyTypes.Count);
             for (int i = 0; i < GroupCount; ++i)
-            { 
+            {
                 Instantiate(EnemyTypes[enemy_type], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
             }
         }
@@ -287,19 +323,6 @@ public class SimControl : MonoBehaviour
         {
             Instantiate(EnemyTypes[RoundCount - 1 % EnemyTypes.Count], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
         }
-
-
-
-        //Note that this just cycles through enemy types, but you'll need more structure than this.
-        //Each fight should be one AI type against one enemy type multiple times. And then each AI type
-        //against a group of the same type multiple times. And then each AI type against a mixed group
-        //multiple times. And possibly more.
-
-        //Call the Initialize() functions for the player.
-        Player.Initialize();
-
-        //Feedback is good...
-        SpawnInfoText("ROUND " + RoundCount); //Look! A string concatenation operator!
 
         //Reset the round delay timer (and round start flag) for after this new round ends.
         RoundTimer = RoundDelay;
@@ -314,14 +337,14 @@ public class SimControl : MonoBehaviour
         //Show a bit of telemetry data on screen.
         SpawnInfoText(Victories + "-" + Defeats + "\n" + DamageDone / TotalFightTime + " DPS");
         //Write all the telemetry data to the file.
-        DataStream.WriteLine(CurrentAI + "," + Victories + "," + Defeats + "," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds);
+        DataStream.WriteLine(AI_List[CurrentAI].ToString() + "," + Victories + "," + Defeats + "," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds);
         //Reset the telemetry counters
         Victories = 0;
         Defeats = 0;
         DamageDone = 0;
         TotalFightTime = 0;
         //After the first fight (which is random), just spam a single key for each fight.
-        CurrentAI = "Spam" + FightCount;
+        CurrentAI++;
     }
 
     //Destroy all the enemy game objects.
@@ -329,17 +352,17 @@ public class SimControl : MonoBehaviour
     {
         //Find all the game objects that have an Enemy component.
         var enemies = FindObjectsOfType<Enemy>();
-        if (enemies.Length == 0) //Didn't find any.
-            return;
         foreach (Enemy enemy in enemies) //A foreach loop! Fancy...
-            Destroy(enemy.gameObject);
+            DestroyImmediate(enemy.gameObject);
     }
 
     //Spawn text at the center of the screen.
     //If set to static, that just means it doesn't move.
     void SpawnInfoText(string text, bool isStatic = false)
     {
-        SpawnInfoText(new Vector3(0, 0, 0), text, isStatic);
+        //dont show feedback if in fast mode
+        if(!FastMode)
+            SpawnInfoText(new Vector3(0, 0, 0), text, isStatic);
     }
 
     //Spawn text wherever you want.

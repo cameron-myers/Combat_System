@@ -156,7 +156,10 @@ public class EnemyAbility : MonoBehaviour
         {
 
             if (ParentEnemy.Target.TakeDamage(EffectValues[(int)Effect.DamageTarget]) == true)
+            {
                 ParentEnemy.Target = null; //If the target is dead, find a new one.
+            }
+
 
         }
         else if (fx == Effect.DamageSelf)

@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
         UseRandomAbility();
         if (StunLeft > 0.0f)
         {
-            StunLeft = Mathf.Clamp(StunLeft - Time.deltaTime, -0.1f, StunTime);
+            StunLeft = Mathf.Clamp(StunLeft - SimControl.DT, -0.1f, StunTime);
         }
         //if dead destroy the objecta
         if (HitPoints <= 0.0f)
@@ -169,11 +169,16 @@ public class Enemy : MonoBehaviour
             HitPoints = Mathf.Clamp(HitPoints - damage, 0.0f, MaxHitPoints);
             //Interpolate the hit point UI bar over half a second.
             HealthBar.InterpolateToScale(HitPoints / MaxHitPoints, 0.5f);
-            //Create a temporary InfoText object to show the damage using the static Instantiate() function.
-            Text damageText = Object.Instantiate(SimControl.InfoTextPrefab, transform.position, Quaternion.identity, SimControl.Canvas.transform).GetComponent<Text>();
-            //Set the damage text to just the integer amount of the damage done.
-            //Uses the "empty string plus number" trick to make it a string.
-            damageText.text = "" + Mathf.Floor(damage);
+
+            if (!SimControl.FastMode)
+            {
+                //Create a temporary InfoText object to show the damage using the static Instantiate() function.
+                Text damageText = Object.Instantiate(SimControl.InfoTextPrefab, transform.position, Quaternion.identity, SimControl.Canvas.transform).GetComponent<Text>();
+                //Set the damage text to just the integer amount of the damage done.
+                //Uses the "empty string plus number" trick to make it a string.
+                damageText.text = "" + Mathf.Floor(damage);
+            }
+                
         }
         //Return true if dead.
         return (HitPoints <= 0.0f);
