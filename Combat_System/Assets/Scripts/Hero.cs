@@ -304,13 +304,49 @@ public class Hero : MonoBehaviour
     public bool UseAbility(int abilityNumber)
     {
         if (abilityNumber == 1 && AbilityOne != null)
-            return AbilityOne.Use();
+        {
+            if (AbilityOne.Use())
+            {
+                SimControl.abilityCountsRound[abilityNumber - 1] += 1;
+                return true;
+            }
+
+            return false;
+        }
+
         if (abilityNumber == 2 && AbilityTwo != null)
-            return AbilityTwo.Use();
+        {
+            if (AbilityTwo.Use())
+            {
+                SimControl.abilityCountsRound[abilityNumber - 1] += 1;
+                return true;
+            }
+
+            return false;
+        }
+
         if (abilityNumber == 3 && AbilityThree != null)
-            return AbilityThree.Use();
+        {
+
+            if (AbilityThree.Use())
+            {
+                SimControl.abilityCountsRound[abilityNumber - 1] += 1;
+                return true;
+            }
+
+            return false;
+        }
+
         if (abilityNumber == 4 && AbilityFour != null)
-            return AbilityFour.Use();
+        {
+            if (AbilityFour.Use())
+            {
+                SimControl.abilityCountsRound[abilityNumber - 1] += 1;
+                return true;
+            }
+            return false;
+            
+        }
         return false;
     }
 
@@ -356,7 +392,7 @@ public class Hero : MonoBehaviour
 
     public void Stun(float stunTime)
     {
-        StunLeft = stunTime - Time.deltaTime;
+        StunLeft = stunTime - SimControl.DT;
         StunTime = stunTime;
         StunBar.InterpolateImmediate(1.0f);
         //Interpolate the hit 0 over stun time

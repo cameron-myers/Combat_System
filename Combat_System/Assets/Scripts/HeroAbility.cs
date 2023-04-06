@@ -188,7 +188,6 @@ public class HeroAbility : MonoBehaviour
         //do each effect based on the enum passed in
         if (fx == Effect.DamageTarget)
         {
-
             if (ParentHero.Target.TakeDamage(EffectValues[(int)Effect.DamageTarget]) == true)
                 ParentHero.Target = ParentHero.FindTarget(); //If the target is dead, find a new one.
 

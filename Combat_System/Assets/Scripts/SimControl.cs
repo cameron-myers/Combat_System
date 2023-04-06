@@ -21,6 +21,7 @@ using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic; //Not needed in this file, but here just in case.
 using System.IO;
+using Unity.VisualScripting;
 //using UnityEditor.PackageManager; //Needed for writing telemetry data to a file.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
 using UnityEngine.UI;
@@ -71,7 +72,7 @@ public class SimControl : MonoBehaviour
 
     //How many rounds is each "fight"?
     public int Rounds = 5;
-    private int RoundCount = 0;
+    private static int RoundCount = 0;
     public static bool RoundOver = false; //Did the current round just end?
     public static bool RoundStart = false; //Is a new round just starting (make sure the player has time to find a target)?
     //How long a delay between rounds?
@@ -111,6 +112,11 @@ public class SimControl : MonoBehaviour
     [SerializeField]
     public List<PlayerAIMode> temp_AI_List;
 
+    public static int enemyit = 0;
+
+    public static List<List<int>> abilityCounts;
+    public static List<int> abilityCountsRound;
+
 
     //Start is called before the first frame update
     void Start()
@@ -118,7 +124,7 @@ public class SimControl : MonoBehaviour
         //Create a comma-separated value file to output telemetry data.
         //This can just then be directly opened in Excel.
         DataStream = new StreamWriter("FightData.csv", true);
-        DataStream.WriteLine("AI TYPE,VICTORIES,DEFEATS,DPS,ROUND LENGTH"); //Write some headers for our columns.
+        DataStream.WriteLine("*1v1*,AI TYPE,AB1(%),AB2(%),AB3(%),AB4(%),VICTORIES,DEFEATS,WIN(%),DPS,ROUND LENGTH,*1v3*,AI TYPE,AB1(%),AB2(%),AB3(%),AB4(%),VICTORIES,DEFEATS,WIN(%),DPS,ROUND LENGTH,\n"); //Write some headers for our columns.
 
         //Get a reference to the canvas (used for UI objects).
         Canvas = GameObject.Find("Canvas");
@@ -136,14 +142,21 @@ public class SimControl : MonoBehaviour
         EnemyTypes = new List<GameObject>(Resources.LoadAll<GameObject>("Prefabs/Enemies"));
         EnemyTypes.Sort((p1, p2) => p1.GetComponent<Enemy>().strength.CompareTo(p2.GetComponent<Enemy>().strength));
         AI_List = temp_AI_List;
+        abilityCounts = new List<List<int>>(Rounds);
+        abilityCountsRound = new List<int>(new int[4]);
+
     }
 
-    //Update is called once per frame
-    void Update()
+//Update is called once per frame
+void Update()
     {
         //If the ESC key is pressed, exit the program.
         if (Input.GetKeyDown(KeyCode.Escape) == true)
+        {
+            DataStream.Close();
             Application.Quit();
+
+        }
 
         //The simulation is over, so stop updating.
         if (FightCount >= Fights)
@@ -202,7 +215,7 @@ public class SimControl : MonoBehaviour
         //results in fast mode vs. normal mode by "jumping" over time
         //thresholds (cooldowns for example) that are in tenths of a second.
         if (FastMode)
-            DT = 0.1f; //We could go even faster by not having visual feedback in this mode...
+            DT = 0.05f; //We could go even faster by not having visual feedback in this mode...
         else if (Time.deltaTime < 0.1f)
             DT = Time.deltaTime;
         else
@@ -229,6 +242,8 @@ public class SimControl : MonoBehaviour
         {
             if (RoundOver == false ) //Player just died.
             {
+
+
                 SpawnInfoText("DEFEAT...");
                 Defeats++;
             }
@@ -241,6 +256,7 @@ public class SimControl : MonoBehaviour
                 return false;
             if (RoundOver == false) //Last enemy just died.
             {
+
                 SpawnInfoText("VICTORY!!!");
                 Victories++;
             }
@@ -254,7 +270,16 @@ public class SimControl : MonoBehaviour
 	//Reset everything for the new round.
     void NewRound()
     {
+
         RoundCount++;
+        if (RoundCount != 1)
+        {
+            //track counts
+            abilityCounts.Add(new List<int>(abilityCountsRound));
+            abilityCountsRound.Clear();
+            abilityCountsRound = new List<int>(new int[4]);
+        }
+
         //Clear out any remaining enemies.
         ClearEnemies();
         
@@ -312,16 +337,15 @@ public class SimControl : MonoBehaviour
         //just group mode, all same enemies
         else if (GroupMode)
         {
-            int enemy_type = Random.Range(0, EnemyTypes.Count);
             for (int i = 0; i < GroupCount; ++i)
             {
-                Instantiate(EnemyTypes[enemy_type], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                Instantiate(EnemyTypes[enemyit], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
             }
         }
         //Just a single enemy
         else
         {
-            Instantiate(EnemyTypes[RoundCount - 1 % EnemyTypes.Count], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+            Instantiate(EnemyTypes[enemyit], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
         }
 
         //Reset the round delay timer (and round start flag) for after this new round ends.
@@ -337,14 +361,152 @@ public class SimControl : MonoBehaviour
         //Show a bit of telemetry data on screen.
         SpawnInfoText(Victories + "-" + Defeats + "\n" + DamageDone / TotalFightTime + " DPS");
         //Write all the telemetry data to the file.
-        DataStream.WriteLine(AI_List[CurrentAI].ToString() + "," + Victories + "," + Defeats + "," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds);
+
+        //should always do single mode first
+        if (GroupMode)
+        {
+            DataStream.Write(", ," + AI_List[CurrentAI].ToString() + ",");
+
+
+
+            /************AVERAGE STUFF**************/
+            //i is round
+            //j is ability count
+            //for each ability write the average percentage used per round
+            List<List<float>> averages = new List<List<float>>();
+            for (int i = 0; i < abilityCounts.Count; ++i)
+            {
+                //list of ability percentages
+                List<float> percent_used = new List<float>();
+                //total use counter
+                float total_used = 0.0f;
+
+                //get percentage each ability was used
+                //for each ability in this round
+                foreach (var ability in abilityCounts[i])
+                {
+                    total_used += ability;
+                }
+                //for rach ability in round (i)
+                for (int j = 0; j < abilityCounts[i].Count; ++j)
+                {
+                    //add the percentage to the list of percentages
+                    percent_used.Add((abilityCounts[i][j] / total_used));
+                }
+
+                averages.Add(new List<float>(percent_used));
+
+            }
+            //store the final outputs
+            List<float> final_average = new List<float>(new float[4]);
+            //averages is of size, number of abilities(x) by number of rounds(y)
+            //add up all percentages per round, divide by number of rounds
+            //this is round iterator
+            for (int k = 0; k < averages.Count; ++k)
+            {
+                //add up each percent
+                //this is ability iterator
+                for (int l = 0; l < averages[k].Count; ++l)
+                {
+                    final_average[l] += averages[k][l];
+                }
+                //divide to find average
+                //final_average[k] /= averages[k].Count;
+            }
+
+            for (int m = 0; m < final_average.Count; ++m)
+            {
+                final_average[m] /= (float)Rounds;
+            }
+            /************AVERAGE STUFF**************/
+
+
+            //print each average
+            foreach (var _out in final_average)
+            {
+                DataStream.Write(_out*100 + ",");
+
+            }
+            DataStream.Write( Victories + "," + Defeats + ","+ ((Victories/Rounds)*100) +"," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds + ", \n");
+            GroupMode = !GroupMode;
+            ++enemyit;
+            if (enemyit > EnemyTypes.Count) enemyit = 0;
+            CurrentAI++;
+            if (CurrentAI > AI_List.Count) { CurrentAI = 0; }
+
+            abilityCounts = new List<List<int>>();
+        }
+        else
+        {
+            DataStream.Write("," + AI_List[CurrentAI].ToString() + ",");
+            //i is round
+            //j is ability count
+            //for each ability write the average percentage used per round
+            List<List<float>> averages = new List<List<float>>();
+            for (int i = 0; i < abilityCounts.Count; ++i)
+            {
+                //list of ability percentages
+                List<float> percent_used = new List<float>();
+                //total use counter
+                float total_used = 0.0f;
+
+                //get percentage each ability was used
+                //for each ability in this round
+                foreach (var ability in abilityCounts[i])
+                {
+                    total_used += ability;
+                }
+                //for rach ability in round (i)
+                for (int j = 0; j < abilityCounts[i].Count; ++j)
+                {
+                    //add the percentage to the list of percentages
+                    percent_used.Add((abilityCounts[i][j] / total_used));
+                }
+
+                averages.Add(new List<float>(percent_used));
+
+            }
+            //store the final outputs
+            List<float> final_average = new List<float>(new float[4]);
+            //averages is of size, number of abilities(x) by number of rounds(y)
+            //add up all percentages per round, divide by number of rounds
+            //this is round iterator
+            for (int k = 0; k < averages.Count; ++k)
+            {
+                //add up each percent
+                //this is ability iterator
+                for (int l = 0; l < averages[k].Count; ++l)
+                {
+                    final_average[l] += averages[k][l];
+                }
+                //divide to find average
+                //final_average[k] /= averages[k].Count;
+            }
+
+            for(int m = 0; m < final_average.Count; ++m)
+            {
+                final_average[m] /= (float)Rounds;
+            }
+            //print each average
+            foreach (var _out in final_average)
+            {
+                DataStream.Write(_out * 100 + ",");
+
+            }
+
+
+            DataStream.Write(Victories + "," + Defeats + "," + ((Victories / Rounds)*100) + "," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds);
+            GroupMode = !GroupMode;
+            abilityCounts = new List<List<int>>();
+
+        }
         //Reset the telemetry counters
         Victories = 0;
         Defeats = 0;
         DamageDone = 0;
         TotalFightTime = 0;
         //After the first fight (which is random), just spam a single key for each fight.
-        CurrentAI++;
+
     }
 
     //Destroy all the enemy game objects.
@@ -382,4 +544,12 @@ public class SimControl : MonoBehaviour
         infotext.text = text;
     }
 
+    /// <summary>
+    /// Gets the round counter
+    /// </summary>
+    /// <returns></returns>
+    public static int GetRoundCount()
+    {
+        return RoundCount;
+    }
 }
