@@ -242,8 +242,6 @@ void Update()
         {
             if (RoundOver == false ) //Player just died.
             {
-
-
                 SpawnInfoText("DEFEAT...");
                 Defeats++;
             }

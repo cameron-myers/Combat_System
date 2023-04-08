@@ -179,7 +179,7 @@ public class Hero : MonoBehaviour
             target = Target;
         
         //Lowest HP
-        /*
+        
         //Find the enemy with the lowest HP.
         float lowestHP = float.MaxValue;
         if (target) //Start with the current target so any ties don't cause target switching.
@@ -193,8 +193,8 @@ public class Hero : MonoBehaviour
                 lowestHP = enemy.HitPoints;
             }
         }
-        */
-
+        
+        /*
         //Closest Target
         float distance = Single.MaxValue;
         
@@ -205,7 +205,7 @@ public class Hero : MonoBehaviour
                 target = enemy;
             }
         }
-
+        */
         return target;
     }
 
