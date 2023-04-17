@@ -19,6 +19,7 @@ Description:
 using System;
 using System.Collections; //Not needed in this file, but here just in case.
 using System.Collections.Generic;
+using System.Threading;
 using Unity.Burst.Intrinsics;
 using Unity.VisualScripting; //Not needed in this file, but here just in case.
 using UnityEngine; //The library that lets your access all of the Unity functionality.
@@ -372,6 +373,7 @@ public class Hero : MonoBehaviour
     {
         if (damage != 0.0f) //Don't bother if the damage is 0
         {
+            SimControl.DamageRecieved += Mathf.Min(Mathf.Max(damage, 0.0f), HitPoints); //cant take more damage than health
             //Make sure hit points do not go negative (or above max, because the "damage" could be negative, i.e., healing).
             HitPoints = Mathf.Clamp(HitPoints - damage, 0.0f, MaxHitPoints);
             //Interpolate the hit point UI bar over half a second.

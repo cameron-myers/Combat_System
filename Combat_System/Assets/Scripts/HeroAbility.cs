@@ -152,6 +152,8 @@ public class HeroAbility : MonoBehaviour
             return false;
         //Use the power.
         ParentHero.UseStamina(StaminaCost);
+        SimControl.StaminaUsed += StaminaCost;
+
         //Apply the damage (or healing is the damage is negative).
         //this is now done in DoEffect
         /*if (ParentHero.Target.TakeDamage(DamageDone) == true)

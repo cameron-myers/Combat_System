@@ -88,7 +88,10 @@ public class SimControl : MonoBehaviour
     public static int Victories = 0;
     public static int Defeats = 0;
     public static float DamageDone = 0;
+    public static float DamageRecieved = 0;
+    public static float StaminaUsed = 0;
     public static float TotalFightTime = 0;
+
     public static StreamWriter DataStream; //Stream used to write the data to a file.
 
     //Need a reference to the player, so we don't have to look it
@@ -124,7 +127,7 @@ public class SimControl : MonoBehaviour
         //Create a comma-separated value file to output telemetry data.
         //This can just then be directly opened in Excel.
         DataStream = new StreamWriter("FightData.csv", true);
-        DataStream.WriteLine("*1v1*,AI TYPE,AB1(%),AB2(%),AB3(%),AB4(%),VICTORIES,DEFEATS,WIN(%),DPS,ROUND LENGTH,*1v3*,AI TYPE,AB1(%),AB2(%),AB3(%),AB4(%),VICTORIES,DEFEATS,WIN(%),DPS,ROUND LENGTH,\n"); //Write some headers for our columns.
+        DataStream.WriteLine("AI TYPE,COMBAT TYPE, ENEMY, VICTORIES, DEFEATS, WIN%, DAMAGE DONE, DAMAGE RECEIVED, DPS, STAMINA USED, ROUND LENGTH, AB1%, AB2%, AB3%, AB4%"); //Write some headers for our columns.
 
         //Get a reference to the canvas (used for UI objects).
         Canvas = GameObject.Find("Canvas");
@@ -154,12 +157,13 @@ void Update()
         if (Input.GetKeyDown(KeyCode.Escape) == true)
         {
             DataStream.Close();
+            UnityEditor.EditorApplication.isPlaying = false;
             Application.Quit();
 
         }
 
         //The simulation is over, so stop updating.
-        if (FightCount >= Fights)
+        if (enemyit >= EnemyTypes.Count)
         {
             if (SimOver == false) //Did the simulation just end?
             {
@@ -215,7 +219,7 @@ void Update()
         //results in fast mode vs. normal mode by "jumping" over time
         //thresholds (cooldowns for example) that are in tenths of a second.
         if (FastMode)
-            DT = 0.05f; //We could go even faster by not having visual feedback in this mode...
+            DT = 0.1f; //We could go even faster by not having visual feedback in this mode...
         else if (Time.deltaTime < 0.1f)
             DT = Time.deltaTime;
         else
@@ -363,7 +367,9 @@ void Update()
         //should always do single mode first
         if (GroupMode)
         {
-            DataStream.Write(", ," + AI_List[CurrentAI].ToString() + ",");
+            DataStream.Write(AI_List[CurrentAI].ToString() + "," + "Group," + EnemyTypes[enemyit].name + ",");
+            DataStream.Write(Victories + "," + Defeats + "," + (((float)Victories / (float)Rounds) * 100.0f) + "," + (float)DamageDone/ (float)Rounds + "," + (float)DamageRecieved/(float)Rounds + "," + (float)DamageDone / (float)TotalFightTime + "," + (float)StaminaUsed / (float)Rounds + ", " + (float)TotalFightTime / (float)Rounds + ",");
+
 
 
 
@@ -425,18 +431,28 @@ void Update()
                 DataStream.Write(_out*100 + ",");
 
             }
-            DataStream.Write( Victories + "," + Defeats + ","+ ((Victories/Rounds)*100) +"," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds + ", \n");
-            GroupMode = !GroupMode;
-            ++enemyit;
-            if (enemyit > EnemyTypes.Count) enemyit = 0;
-            CurrentAI++;
-            if (CurrentAI > AI_List.Count) { CurrentAI = 0; }
 
+            DataStream.WriteLine();
             abilityCounts = new List<List<int>>();
+            ++CurrentAI;
+            if (CurrentAI >= AI_List.Count)
+            {
+                CurrentAI = 0;
+                GroupMode = !GroupMode;
+                ++enemyit;
+
+            }
+
+
+
         }
         else
         {
-            DataStream.Write("," + AI_List[CurrentAI].ToString() + ",");
+            //write the ai mode and single mode, and enemy type
+            DataStream.Write(AI_List[CurrentAI].ToString() + ",Single," + EnemyTypes[enemyit].name + ",");
+            //write the normal data, wins, losses, W/R % , DPS, Damage done, Damage received, Stamina used, Round length
+            DataStream.Write(Victories + "," + Defeats + "," + (((float)Victories / (float)Rounds) * 100.0f) + "," + (float)DamageDone / (float)Rounds + "," + (float)DamageRecieved / (float)Rounds + ","+ (float)DamageDone / (float)TotalFightTime + "," + (float)StaminaUsed / (float)Rounds + ", " + (float)TotalFightTime / (float)Rounds + ",");
+
             //i is round
             //j is ability count
             //for each ability write the average percentage used per round
@@ -491,19 +507,27 @@ void Update()
                 DataStream.Write(_out * 100 + ",");
 
             }
-
-
-            DataStream.Write(Victories + "," + Defeats + "," + ((Victories / Rounds)*100) + "," + DamageDone / TotalFightTime + "," + TotalFightTime / Rounds);
-            GroupMode = !GroupMode;
             abilityCounts = new List<List<int>>();
+            DataStream.WriteLine();
+            ++CurrentAI;
+            if (CurrentAI >= AI_List.Count)
+            {
+                CurrentAI = 0;
+                GroupMode = !GroupMode;
+      
+            }
 
         }
         //Reset the telemetry counters
         Victories = 0;
         Defeats = 0;
         DamageDone = 0;
+        DamageRecieved = 0;
+        StaminaUsed = 0;
         TotalFightTime = 0;
-        //After the first fight (which is random), just spam a single key for each fight.
+        
+
+
 
     }
 
