@@ -127,7 +127,7 @@ public class SimControl : MonoBehaviour
         //Create a comma-separated value file to output telemetry data.
         //This can just then be directly opened in Excel.
         DataStream = new StreamWriter("FightData.csv", true);
-        DataStream.WriteLine("AI TYPE,COMBAT TYPE, ENEMY, VICTORIES, DEFEATS, WIN%, DAMAGE DONE, DAMAGE RECEIVED, DPS, STAMINA USED, ROUND LENGTH, AB1%, AB2%, AB3%, AB4%"); //Write some headers for our columns.
+        DataStream.WriteLine("AI TYPE,COMBAT TYPE, ENEMY, HP, VICTORIES, DEFEATS, WIN%, DAMAGE DONE, DAMAGE RECEIVED, DPS, STAMINA USED, ROUND LENGTH, AB1%, AB2%, AB3%, AB4%"); //Write some headers for our columns.
 
         //Get a reference to the canvas (used for UI objects).
         Canvas = GameObject.Find("Canvas");
@@ -367,7 +367,7 @@ void Update()
         //should always do single mode first
         if (GroupMode)
         {
-            DataStream.Write(AI_List[CurrentAI].ToString() + "," + "Group," + EnemyTypes[enemyit].name + ",");
+            DataStream.Write(AI_List[CurrentAI].ToString() + "," + "Group," + EnemyTypes[enemyit].name + "," + EnemyTypes[enemyit].GetComponent<Enemy>().MaxHitPoints + ",");
             DataStream.Write(Victories + "," + Defeats + "," + (((float)Victories / (float)Rounds) * 100.0f) + "," + (float)DamageDone/ (float)Rounds + "," + (float)DamageRecieved/(float)Rounds + "," + (float)DamageDone / (float)TotalFightTime + "," + (float)StaminaUsed / (float)Rounds + ", " + (float)TotalFightTime / (float)Rounds + ",");
 
 
@@ -449,7 +449,7 @@ void Update()
         else
         {
             //write the ai mode and single mode, and enemy type
-            DataStream.Write(AI_List[CurrentAI].ToString() + ",Single," + EnemyTypes[enemyit].name + ",");
+            DataStream.Write(AI_List[CurrentAI].ToString() + ",Single," + EnemyTypes[enemyit].name + "," + EnemyTypes[enemyit].GetComponent<Enemy>().MaxHitPoints + ",");
             //write the normal data, wins, losses, W/R % , DPS, Damage done, Damage received, Stamina used, Round length
             DataStream.Write(Victories + "," + Defeats + "," + (((float)Victories / (float)Rounds) * 100.0f) + "," + (float)DamageDone / (float)Rounds + "," + (float)DamageRecieved / (float)Rounds + ","+ (float)DamageDone / (float)TotalFightTime + "," + (float)StaminaUsed / (float)Rounds + ", " + (float)TotalFightTime / (float)Rounds + ",");
 
