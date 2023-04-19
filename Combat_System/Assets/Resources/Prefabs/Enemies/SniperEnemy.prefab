@@ -248,7 +248,7 @@ MonoBehaviour:
   - 15
   - 0
   EffectsList: 0300000001000000
-  CooldownTime: 3
+  CooldownTime: 2.5
   MaximumRange: 10
   Inactive: 0
   CooldownLeft: 0
@@ -356,8 +356,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHitPoints: 200
-  MoveSpeed: 0.25
-  OptimalRange: 7
+  MoveSpeed: 0.5
+  OptimalRange: 8
   strength: 2
   HitPoints: 200
   StunLeft: 0

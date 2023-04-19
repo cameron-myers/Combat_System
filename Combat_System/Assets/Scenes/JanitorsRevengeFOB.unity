@@ -1343,16 +1343,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EffectValues:
   - 0
-  - 5
+  - 2
   - 0
-  - 25
+  - 45
   AOERange: 5
   EffectsList: 0300000001000000
   AOEList: 0300000001000000
-  StaminaCost: 20
+  StaminaCost: 30
   MaximumRange: 15
   Inactive: 0
-  CooldownTime: 10
+  CooldownTime: 9
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
   ParentHero: {fileID: 0}
@@ -1685,7 +1685,7 @@ MonoBehaviour:
   StaminaCost: 10
   MaximumRange: 5
   Inactive: 0
-  CooldownTime: 4
+  CooldownTime: 3.5
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
   ParentHero: {fileID: 0}
@@ -2966,9 +2966,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c89209401fcfc574dbccb9e4ed27636d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHitPoints: 1000
+  MaxHitPoints: 550
   MoveSpeed: 1.5
-  MaxStamina: 200
+  MaxStamina: 180
   OptimalRange: 4
   StaminaStun: 1.5
   HitPoints: 200
@@ -3234,16 +3234,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EffectValues:
   - 0
-  - 2
+  - 1
   - 0
   - 0
   AOERange: 3
   EffectsList: 01000000
   AOEList: 01000000
-  StaminaCost: 5
+  StaminaCost: 7
   MaximumRange: 8
   Inactive: 0
-  CooldownTime: 10
+  CooldownTime: 8
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
   ParentHero: {fileID: 0}
@@ -3348,14 +3348,14 @@ MonoBehaviour:
   - 0
   - 0
   - 1
-  - 15
+  - 18
   AOERange: 2
   EffectsList: 03000000
   AOEList: 
-  StaminaCost: 5
+  StaminaCost: 8
   MaximumRange: 5
   Inactive: 0
-  CooldownTime: 0.5
+  CooldownTime: 0.6
   CooldownLeft: 0
   CooldownBar: {fileID: 0}
   ParentHero: {fileID: 0}
@@ -3433,7 +3433,7 @@ MonoBehaviour:
   MixCount: 3
   GroupCount: 3
   Fights: 12
-  Rounds: 100
+  Rounds: 2
   RoundDelay: 0.1
   temp_AI_List: 000000000100000002000000030000000400000005000000
 --- !u!4 &1788695466

@@ -249,7 +249,7 @@ MonoBehaviour:
   - 0
   EffectsList: 0300000001000000
   CooldownTime: 2.8
-  MaximumRange: 7
+  MaximumRange: 5
   Inactive: 0
   CooldownLeft: 0
   CooldownBar: {fileID: 0}

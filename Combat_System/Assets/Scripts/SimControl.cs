@@ -116,6 +116,7 @@ public class SimControl : MonoBehaviour
     public List<PlayerAIMode> temp_AI_List;
 
     public static int enemyit = 0;
+    public static int mixedit = 0;
 
     public static List<List<int>> abilityCounts;
     public static List<int> abilityCountsRound;
@@ -163,7 +164,7 @@ void Update()
         }
 
         //The simulation is over, so stop updating.
-        if (enemyit >= EnemyTypes.Count)
+        if (enemyit >= EnemyTypes.Count && mixedit >= 3)
         {
             if (SimOver == false) //Did the simulation just end?
             {
@@ -174,6 +175,10 @@ void Update()
                 SpawnInfoText("SIMULATION OVER", true);
             }
             return;
+        }
+        else if (enemyit >= EnemyTypes.Count)
+        {
+            MixedMode = true;
         }
 
 		//If the A key is pressed, toggle Auto mode on or off.
@@ -314,7 +319,7 @@ void Update()
         //3 different combos
         if (MixedMode)
         {
-            switch (Random.Range(0, MixCount))
+            switch (mixedit)
             {
                 case 0:
                     Instantiate(EnemyTypes[0], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
@@ -325,13 +330,13 @@ void Update()
                     Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
                     Instantiate(EnemyTypes[3], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
                     Instantiate(EnemyTypes[5], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-                    break;
+                   break;
 
                 case 2:
                     Instantiate(EnemyTypes[2], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
                     Instantiate(EnemyTypes[4], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
                     Instantiate(EnemyTypes[1], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
-                    break;
+                     break;
 
                 default: break;
             }
@@ -341,13 +346,13 @@ void Update()
         {
             for (int i = 0; i < GroupCount; ++i)
             {
-                Instantiate(EnemyTypes[enemyit], new Vector3(StartingX, Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+                Instantiate(EnemyTypes[enemyit], new Vector3(Random.Range(4.0f, 6.8f), Random.Range(-1.5f, 1.0f), 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
             }
         }
         //Just a single enemy
         else
         {
-            Instantiate(EnemyTypes[enemyit], new Vector3(StartingX, 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
+            Instantiate(EnemyTypes[enemyit], new Vector3(Random.Range(4.0f, 6.8f), 0, 0), Quaternion.Euler(0, 0, 90), null); //Just make multiple calls to spawn a group of enemies.
         }
 
         //Reset the round delay timer (and round start flag) for after this new round ends.
@@ -445,6 +450,94 @@ void Update()
 
 
 
+        }
+        else if (MixedMode)
+        {
+            //write the ai mode and single mode, and enemy type
+            switch (mixedit)
+            {
+                case 0:
+                    DataStream.Write(AI_List[CurrentAI].ToString() + ",Mixed," + EnemyTypes[0].name +"+"+ EnemyTypes[1].name +"+"+ EnemyTypes[2].name + ","
+                                     + ((int)EnemyTypes[0].GetComponent<Enemy>().MaxHitPoints + (int)EnemyTypes[1].GetComponent<Enemy>().MaxHitPoints + (int)EnemyTypes[2].GetComponent<Enemy>().MaxHitPoints) + ",");
+                    break;
+                case 1:
+                   DataStream.Write(AI_List[CurrentAI].ToString() + ",Mixed," + EnemyTypes[1].name +"+"+ EnemyTypes[3].name +"+"+ EnemyTypes[5].name + ","
+                                     + ((int)EnemyTypes[1].GetComponent<Enemy>().MaxHitPoints + (int)EnemyTypes[3].GetComponent<Enemy>().MaxHitPoints + (int)EnemyTypes[5].GetComponent<Enemy>().MaxHitPoints) + ",");
+                    break;
+
+                case 2:
+                    DataStream.Write(AI_List[CurrentAI].ToString() + ",Mixed," + EnemyTypes[2].name +"+"+ EnemyTypes[4].name +"+"+ EnemyTypes[1].name + ","
+                                     + ((int)EnemyTypes[2].GetComponent<Enemy>().MaxHitPoints + (int)EnemyTypes[4].GetComponent<Enemy>().MaxHitPoints + (int)EnemyTypes[1].GetComponent<Enemy>().MaxHitPoints) + ",");
+                    break;
+
+                default: break;
+            }
+            //write the normal data, wins, losses, W/R % , DPS, Damage done, Damage received, Stamina used, Round length
+            DataStream.Write(Victories + "," + Defeats + "," + (((float)Victories / (float)Rounds) * 100.0f) + "," + (float)DamageDone / (float)Rounds + "," + (float)DamageRecieved / (float)Rounds + "," + (float)DamageDone / (float)TotalFightTime + "," + (float)StaminaUsed / (float)Rounds + ", " + (float)TotalFightTime / (float)Rounds + ",");
+
+            //i is round
+            //j is ability count
+            //for each ability write the average percentage used per round
+            List<List<float>> averages = new List<List<float>>();
+            for (int i = 0; i < abilityCounts.Count; ++i)
+            {
+                //list of ability percentages
+                List<float> percent_used = new List<float>();
+                //total use counter
+                float total_used = 0.0f;
+
+                //get percentage each ability was used
+                //for each ability in this round
+                foreach (var ability in abilityCounts[i])
+                {
+                    total_used += ability;
+                }
+                //for rach ability in round (i)
+                for (int j = 0; j < abilityCounts[i].Count; ++j)
+                {
+                    //add the percentage to the list of percentages
+                    percent_used.Add((abilityCounts[i][j] / total_used));
+                }
+
+                averages.Add(new List<float>(percent_used));
+
+            }
+            //store the final outputs
+            List<float> final_average = new List<float>(new float[4]);
+            //averages is of size, number of abilities(x) by number of rounds(y)
+            //add up all percentages per round, divide by number of rounds
+            //this is round iterator
+            for (int k = 0; k < averages.Count; ++k)
+            {
+                //add up each percent
+                //this is ability iterator
+                for (int l = 0; l < averages[k].Count; ++l)
+                {
+                    final_average[l] += averages[k][l];
+                }
+                //divide to find average
+                //final_average[k] /= averages[k].Count;
+            }
+
+            for (int m = 0; m < final_average.Count; ++m)
+            {
+                final_average[m] /= (float)Rounds;
+            }
+            //print each average
+            foreach (var _out in final_average)
+            {
+                DataStream.Write(_out * 100 + ",");
+
+            }
+            abilityCounts = new List<List<int>>();
+            DataStream.WriteLine();
+            ++CurrentAI;
+            if (CurrentAI >= AI_List.Count)
+            {
+                CurrentAI = 0;
+                ++mixedit;
+                //to keep mixed mode on
+            }
         }
         else
         {
