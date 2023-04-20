@@ -3433,8 +3433,8 @@ MonoBehaviour:
   MixCount: 3
   GroupCount: 3
   Fights: 12
-  Rounds: 2
-  RoundDelay: 0.1
+  Rounds: 100
+  RoundDelay: 0.01
   temp_AI_List: 000000000100000002000000030000000400000005000000
 --- !u!4 &1788695466
 Transform:

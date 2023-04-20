@@ -147,7 +147,7 @@ MonoBehaviour:
   - 0
   - 0.75
   - 0
-  - 20
+  - 19
   - 0
   EffectsList: 0300000001000000
   CooldownTime: 3
@@ -306,7 +306,7 @@ MonoBehaviour:
   - 10
   - 0
   EffectsList: 03000000
-  CooldownTime: 0.6
+  CooldownTime: 0.65
   MaximumRange: 3
   Inactive: 0
   CooldownLeft: 0

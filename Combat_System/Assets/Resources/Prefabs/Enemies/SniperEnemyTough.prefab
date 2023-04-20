@@ -243,12 +243,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EffectValues:
   - 0
-  - 1
+  - 1.2
   - 0
-  - 15
+  - 60
   - 0
   EffectsList: 0300000001000000
-  CooldownTime: 3
+  CooldownTime: 1.25
   MaximumRange: 10
   Inactive: 0
   CooldownLeft: 0
@@ -355,9 +355,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8edcfeb06504448ab24dd30113131b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHitPoints: 200
-  MoveSpeed: 0.25
-  OptimalRange: 7
+  MaxHitPoints: 275
+  MoveSpeed: 0.3
+  OptimalRange: 9
   strength: 5
   HitPoints: 200
   StunLeft: 0
@@ -416,7 +416,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 10
+  - 25
   - 0
   EffectsList: 03000000
   CooldownTime: 1
