@@ -1056,13 +1056,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '10s Cooldown
+  m_Text: '8s Cooldown
 
-    7 Range
+    8 Range
 
-    2s Stun To Enemy(AOE)
+    1s Stun To Enemy(AOE)
 
-    5 Stamina'
+    7 Stamina'
 --- !u!222 &524810328
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1469,9 +1469,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '4s Cooldown
+  m_Text: '3.5s Cooldown
 
-    3 Range
+    5 Range
 
     30 Damage
 
@@ -2367,16 +2367,16 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '10s Cooldown
+  m_Text: '9s Cooldown
 
     15 Range
 
-    25 Damage to Enemy(AOE)
+    45 Damage to Enemy(AOE)
 
-    5 Stun to
+    2 Stun to
     Enemy(AOE)
 
-    20 Stamina'
+    30 Stamina'
 --- !u!222 &1248410155
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3522,11 +3522,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '0.5s Cooldown
+  m_Text: '0.6s Cooldown
 
-    15 Damage
+    18 Damage
 
-    5 Stamina'
+    8 Stamina'
 --- !u!222 &1823375054
 CanvasRenderer:
   m_ObjectHideFlags: 0

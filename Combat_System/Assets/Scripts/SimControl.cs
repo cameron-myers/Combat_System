@@ -158,7 +158,7 @@ void Update()
         if (Input.GetKeyDown(KeyCode.Escape) == true)
         {
             DataStream.Close();
-            UnityEditor.EditorApplication.isPlaying = false;
+            //UnityEditor.EditorApplication.isPlaying = false;
             Application.Quit();
 
         }
